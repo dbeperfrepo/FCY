@@ -276,7 +276,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           </div>
           <button class="btn btn-primary btn-block" type="submit">Sign In</button>
         </form>
-        <div class="auth-switch">Have an invite code from your Administrator? <button class="alink" id="toActivate">Activate your account</button></div>
+        <div class="auth-switch">New here? <button class="alink" id="toRegister">Create an account</button> • Have an invite code? <button class="alink" id="toActivate">Activate it</button></div>
       </div>
       <div id="authSetupView" hidden>
         <div class="auth-title">Welcome — set up your Administrator account</div>
@@ -297,9 +297,10 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
       </div>
       <div id="authRegView" hidden>
         <div class="auth-title">Create account</div>
-        <div class="auth-sub">Register to access the reporting suite</div>
+        <div class="auth-sub">Register to access the reporting suite — an Administrator invite code is required</div>
         <div class="aerr" id="regBanner" hidden></div>
         <form id="regForm" novalidate>
+          <div class="afield"><label for="rgCode">Administrator invite code</label><input id="rgCode" type="text" autocomplete="off" placeholder="XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.06em"><span class="ferr" id="rgCodeErr"></span></div>
           <div class="afield"><label for="rgName">Full name</label><input id="rgName" type="text" autocomplete="name" placeholder="e.g. Sara Mekonnen"><span class="ferr" id="rgNameErr"></span></div>
           <div class="afield"><label for="rgEmail">Email address</label><input id="rgEmail" type="email" autocomplete="email" placeholder="you@dbe.com.et"><span class="ferr" id="rgEmailErr"></span></div>
           <div class="afield"><label for="rgPass">Password</label>
@@ -357,7 +358,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
         </form>
       </div>
     </div>
-    <p class="auth-foot">© 2026 Development Bank of Ethiopia • Treasury &amp; Investment Directorate</p>
+    <p class="auth-foot">© 2026 DBE • Strategy &amp; Planning Directorate-Performance Division</p>
   </div>
 </div>
 
@@ -380,7 +381,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
       <button class="nav-item" data-tab="help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Help</button>
       <button class="nav-item" data-tab="admin"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>Administrator</button>
     </nav>
-    <div class="side-foot"><b style="color:#cfe6db">FCY Reporting Unit</b><br>Treasury &amp; Investment<br>Version 7.2 • Period report fixed</div>
+    <div class="side-foot"><b style="color:#cfe6db">FCY Reporting Unit</b><br>Strategy &amp; Planning Directorate<br>Version 7.2 • Period report fixed</div>
   </aside>
 
   <div class="main">
@@ -587,7 +588,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           <div class="card">
             <h3>🚀 Getting Started</h3>
             <ol class="step-list">
-              <li><b>Sign in</b> — first-time setup creates your Administrator account (no default credentials); everyone after that signs in with their own email and password, or activates via an invite code.</li>
+              <li><b>Sign in</b> — first-time setup creates your Administrator account (no default credentials); everyone after that signs in with their own email and password. New users can self-register via <b>Create an account</b> using the Administrator's shared sign-up code, or activate a pre-created account via a personal invite code.</li>
               <li><b>Monthly Report</b> — official template with MoM change &amp; cumulative performance; only applicable items shown, SN I–VI auto-regenerated.</li>
               <li><b>Period Report</b> — Quarterly / Semi-Annual / Nine-Month / Annual consolidations with prior-period &amp; prior-year comparisons (EURO/FX row now renders correctly).</li>
               <li><b>Reports</b> — full statement (Plan / Actual / Variance); items without activity are hidden and numbering rebuilt.</li>
@@ -598,7 +599,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           <div class="card">
             <h3>🔐 Authentication Notes</h3>
             <div style="background:#f6f9f7;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px">
-              Passwords are stored as salted PBKDF2-SHA256 hashes (150,000 iterations) generated with the browser's cryptographic RNG — never in plain text. Sessions honour “Remember me” and automatically expire (12h by default, 30 days when remembered). Repeated failed sign-ins are temporarily locked out. Registered accounts get the <b>Editor</b> role and are signed in automatically after creation. The Administrator tab unlocks automatically for Administrator sessions, or with the demo credential below. Users added from the Administrator panel instead receive a one-time <b>invite code</b> to activate their account and set their own password, and an Administrator can reset any user's password from Account Administration at any time — every reset is written to the audit trail.
+              Passwords are stored as salted PBKDF2-SHA256 hashes (150,000 iterations) generated with the browser's cryptographic RNG — never in plain text. Sessions honour “Remember me” and automatically expire (12h by default, 30 days when remembered). Repeated failed sign-ins are temporarily locked out. <b>Create an account</b> requires the shared Administrator sign-up code (found under Administrator ▸ Settings, and regenerable at any time); accounts created this way get the <b>Editor</b> role and are signed in automatically. The Administrator tab unlocks automatically for Administrator sessions, or with the demo credential below. Users added from the Administrator panel instead receive their own one-time <b>invite code</b> to activate their account and set their own password, and an Administrator can reset any user's password from Account Administration at any time — every reset is written to the audit trail.
             </div>
             <div style="background:#fff7ed;border:1px solid #fcd9a8;border-radius:10px;padding:14px;font-size:12.5px;margin-top:10px;color:#7c4a03">
               ⚠️ <b>Deployment notice:</b> this is a self-contained, client-side application — all accounts, sessions and the audit trail live in this browser's local storage only, with no backend server enforcing access control. There are no default or demo credentials; the first person to open the app creates the Administrator account, and every account after that is created by an Administrator and activated via a one-time invite code. Anyone with script-execution access to this page (e.g. browser DevTools) can still bypass the client-side checks, so this should not be the sole safeguard for sensitive data — a production deployment should ultimately authenticate against a real backend.
@@ -680,6 +681,15 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
             <div class="card"><h3>⚙️ Settings</h3>
               <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;margin-bottom:16px"><input type="checkbox" id="setLock" style="width:16px;height:16px;accent-color:#0a5236">Lock <b>Plan</b> datasets against editing</label>
               <button class="btn btn-primary btn-sm" onclick="saveSettings()">Save Settings</button>
+              <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+                <div style="font-weight:700;font-size:13px;margin-bottom:6px">🔑 Self sign-up invite code</div>
+                <div class="tbl-note" style="margin-bottom:10px">Anyone using the "Create an account" form on the sign-in screen must enter this code. Share it only with people you want to be able to register (they will get the <b>Editor</b> role). Regenerating it invalidates the old code immediately.</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                  <input class="inp" id="signupCodeDisplay" readonly style="flex:1;min-width:140px;font-weight:700;letter-spacing:.06em">
+                  <button class="btn btn-ghost btn-sm" onclick="copySignupCode()">📋 Copy</button>
+                  <button class="btn btn-primary btn-sm" onclick="regenerateSignupCode()">⟲ Regenerate</button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="grid-2">
@@ -860,6 +870,12 @@ async function verifyAndMaybeUpgrade(user,pw){
 }
 const INVITE_TTL_MS=7*24*60*60*1000;
 function genInviteCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return secureRandomChars(chars,4)+'-'+secureRandomChars(chars,4);}
+// Shared self-sign-up code: a single Administrator-controlled code (distinct from per-user invite codes)
+// that gates the open "Create an account" form. Without it, self sign-up is not possible.
+const LS_SIGNUP_CODE='dbe_fcy_signup_code_v1';
+function getSignupCode(){return lsGet(LS_SIGNUP_CODE)||'';}
+function setSignupCode(code){lsSet(LS_SIGNUP_CODE,code);}
+function ensureSignupCode(){let c=getSignupCode();if(!c){c=genInviteCode();setSignupCode(c);}return c;}
 function genTempPassword(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';return secureRandomChars(chars,12);}
 let FORCE_RESET_USER=null;
 async function seedUsers(){
@@ -918,6 +934,7 @@ function setupAuth(){
     b.textContent=showing?'🙈':'👁';
     b.setAttribute('aria-label',showing?'Hide password':'Show password');
   }));
+  $('#toRegister').addEventListener('click',()=>showAuthView('register'));
   $('#toLogin').addEventListener('click',()=>showAuthView('login'));
   $('#toForgot').addEventListener('click',()=>showAuthView('forgot'));
   $('#fgBack').addEventListener('click',()=>showAuthView('login'));
@@ -947,6 +964,7 @@ function setupAuth(){
     const user=await mkUser(name,email,email.split('@')[0],'Administrator',pw);
     AUTH_USERS.push(user);
     lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
+    ensureSignupCode();
     addAudit('Setup complete',email+' created the first Administrator account');
     setSession({name:user.name,email:user.email,role:user.role,at:Date.now()},true);
     enterApp(getSession());
@@ -984,21 +1002,29 @@ function setupAuth(){
   });
   $('#regForm').addEventListener('submit',async e=>{
     e.preventDefault();
-    const name=$('#rgName').value.trim(),email=$('#rgEmail').value.trim(),pw=$('#rgPass').value,pw2=$('#rgPass2').value;
+    const code=$('#rgCode').value.trim().toUpperCase(),name=$('#rgName').value.trim(),email=$('#rgEmail').value.trim(),pw=$('#rgPass').value,pw2=$('#rgPass2').value;
     let ok=true;
+    $('#rgCodeErr').textContent=code?'':'Administrator invite code is required';if(!code)ok=false;
     $('#rgNameErr').textContent=(name.length>=3)?'':'Full name (min 3 characters) is required';if(name.length<3)ok=false;
     $('#rgEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
     const issues=passwordIssues(pw);
     $('#rgPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
     $('#rgPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
     if(!ok)return;
+    const lockSecs=checkLockout('signup',email||'signup');
+    if(lockSecs){$('#regBanner').textContent='Too many failed attempts. Try again in '+lockSecs+'s.';$('#regBanner').hidden=false;return;}
+    if(!getSignupCode()||code!==getSignupCode().toUpperCase()){
+      recordFailure('signup',email||'signup');
+      $('#rgCodeErr').textContent='That invite code is not valid.';
+      $('#regBanner').textContent='That Administrator invite code is not valid. Ask your Administrator for the current sign-up code.';$('#regBanner').hidden=false;return;
+    }
     if(AUTH_USERS.some(x=>(x.email||'').toLowerCase()===email.toLowerCase())){
       $('#regBanner').textContent='An account with this email already exists. Sign in instead.';$('#regBanner').hidden=false;return;
     }
     const user=await mkUser(name,email,email.split('@')[0],'Editor',pw);
     AUTH_USERS.push(user);
     lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    addAudit('Account created',email+' registered (Editor)');
+    addAudit('Account created',email+' registered with Administrator invite code (Editor)');
     setSession({name:user.name,email:user.email,role:user.role,at:Date.now()},true);
     enterApp(getSession());
     showToast('Account created — you are now signed in','success');
@@ -2193,6 +2219,7 @@ function renderAdmin(){
   if(!state.adminLoggedIn)return;
   $('#admNow').textContent='Session: '+(sess?sess.email:'local')+' • '+new Date().toLocaleString('en-GB');
   $('#setLock').checked=state.settings.planLocked;
+  $('#signupCodeDisplay').value=ensureSignupCode();
   $('#dmStats').innerHTML=YEARS.map(y=>'FY '+y+': plan <b>'+countModified(y,'plan')+'</b>, actual <b>'+countModified(y,'actual')+'</b> modified').join('<br>');
   let html=state.users.map((u,i)=>{const cls=u.role==='Administrator'?'adm':u.role==='Editor'?'edt':'vwr';const initials=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return '<div class="user-row"><div class="avatar">'+escHtml(initials)+'</div><div style="flex:1"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+(u.locked?'Primary account':'Member')+'</div></div><span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'+(u.locked?'':'<button class="btn btn-danger btn-sm" onclick="removeUser('+i+')">✕</button>')+'</div>';}).join('');
   html+='<div style="margin-top:14px;font-size:12px;font-weight:800;color:var(--muted)">LOGIN ACCOUNTS (auth store)</div>';
@@ -2287,6 +2314,8 @@ function showResetModal(user,temp){
 }
 function removeUser(i){const u=state.users[i];if(u.locked)return;state.users.splice(i,1);persist();renderAdmin();showToast('User removed','warn');}
 function saveSettings(){state.settings.planLocked=$('#setLock').checked;persist();addAudit('Settings saved','Plan locked: '+(state.settings.planLocked?'Yes':'No'));showToast('Settings saved','success');}
+function copySignupCode(){const code=ensureSignupCode();const el=$('#signupCodeDisplay');el.select();if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(()=>showToast('Sign-up code copied','success')).catch(()=>showToast('Could not copy — select and copy manually','error'));}else{try{document.execCommand('copy');showToast('Sign-up code copied','success');}catch(e){showToast('Could not copy — select and copy manually','error');}}}
+function regenerateSignupCode(){const newCode=genInviteCode();setSignupCode(newCode);$('#signupCodeDisplay').value=newCode;addAudit('Sign-up code regenerated','Previous self sign-up invite code invalidated');showToast('New sign-up code generated — the old code no longer works','success');}
 function downloadImportTemplate(){
   if(typeof XLSX==='undefined'){showToast('Excel library not loaded','error');return;}
   const head=['Line Item Key','Line Item Description',...MS];
