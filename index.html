@@ -266,7 +266,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
         <div class="auth-sub">Access the FCY Cashflow Reporting Suite</div>
         <div class="aerr" id="loginBanner" hidden></div>
         <form id="loginForm" novalidate>
-          <div class="afield"><label for="liUser">Email or username</label><input id="liUser" type="text" autocomplete="username" placeholder="admin or you@dbe.com.et"><span class="ferr" id="liUserErr"></span></div>
+          <div class="afield"><label for="liUser">Email or username</label><input id="liUser" type="text" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="liUserErr"></span></div>
           <div class="afield"><label for="liPass">Password</label>
             <div class="pwrap"><input id="liPass" type="password" autocomplete="current-password" placeholder="••••••••"><button type="button" class="eye" data-eye="liPass" aria-label="Show/Hide password">👁</button></div>
             <span class="ferr" id="liPassErr"></span></div>
@@ -276,8 +276,24 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           </div>
           <button class="btn btn-primary btn-block" type="submit">Sign In</button>
         </form>
-        <div class="auth-switch">New to the suite? <button class="alink" id="toRegister">Create an account</button> • <button class="alink" id="toActivate">Have an invite code?</button> • <button class="alink" id="resetDemo">Reset demo accounts</button></div>
-        <div class="hint-box">🔑 Demo accounts — <b>admin</b> / <b>admin123</b> (Administrator) • <b>demo@dbe.com.et</b> / <b>Demo@1234</b> (Editor)</div>
+        <div class="auth-switch">Have an invite code from your Administrator? <button class="alink" id="toActivate">Activate your account</button></div>
+      </div>
+      <div id="authSetupView" hidden>
+        <div class="auth-title">Welcome — set up your Administrator account</div>
+        <div class="auth-sub">No accounts exist yet. Create the first Administrator account to finish setting up this application. No default or demo credentials are included.</div>
+        <div class="aerr" id="setupBanner" hidden></div>
+        <form id="setupForm" novalidate>
+          <div class="afield"><label for="suName">Full name</label><input id="suName" type="text" autocomplete="name" placeholder="Your full name"><span class="ferr" id="suNameErr"></span></div>
+          <div class="afield"><label for="suEmail">Email address</label><input id="suEmail" type="email" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="suEmailErr"></span></div>
+          <div class="afield"><label for="suPass">Password</label>
+            <div class="pwrap"><input id="suPass" type="password" autocomplete="new-password" placeholder="Min 8 chars, Aa + number"><button type="button" class="eye" data-eye="suPass" aria-label="Show/Hide password">👁</button></div>
+            <div class="strength"><i id="suStrengthBar"></i></div><span class="stext" id="suStrengthTxt"></span>
+            <span class="ferr" id="suPassErr"></span></div>
+          <div class="afield"><label for="suPass2">Confirm password</label>
+            <div class="pwrap"><input id="suPass2" type="password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="eye" data-eye="suPass2" aria-label="Show/Hide password">👁</button></div>
+            <span class="ferr" id="suPass2Err"></span></div>
+          <button class="btn btn-primary btn-block" type="submit">Create Administrator Account</button>
+        </form>
       </div>
       <div id="authRegView" hidden>
         <div class="auth-title">Create account</div>
@@ -571,7 +587,7 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           <div class="card">
             <h3>🚀 Getting Started</h3>
             <ol class="step-list">
-              <li><b>Sign in</b> — demo accounts: <b>admin / admin123</b> or <b>demo@dbe.com.et / Demo@1234</b>. “Reset demo accounts” fixes any credential issue.</li>
+              <li><b>Sign in</b> — first-time setup creates your Administrator account (no default credentials); everyone after that signs in with their own email and password, or activates via an invite code.</li>
               <li><b>Monthly Report</b> — official template with MoM change &amp; cumulative performance; only applicable items shown, SN I–VI auto-regenerated.</li>
               <li><b>Period Report</b> — Quarterly / Semi-Annual / Nine-Month / Annual consolidations with prior-period &amp; prior-year comparisons (EURO/FX row now renders correctly).</li>
               <li><b>Reports</b> — full statement (Plan / Actual / Variance); items without activity are hidden and numbering rebuilt.</li>
@@ -582,7 +598,10 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           <div class="card">
             <h3>🔐 Authentication Notes</h3>
             <div style="background:#f6f9f7;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:13px">
-              Passwords are stored as salted hashes (deterministic, environment-independent). Sessions honour “Remember me”. Registered accounts get the <b>Editor</b> role and are signed in automatically after creation. The Administrator tab unlocks automatically for Administrator sessions, or with <b>admin / admin123</b>. Users added from the Administrator panel instead receive a one-time <b>invite code</b> to activate their account and set their own password, and an Administrator can reset any user's password from Account Administration at any time — every reset is written to the audit trail.
+              Passwords are stored as salted PBKDF2-SHA256 hashes (150,000 iterations) generated with the browser's cryptographic RNG — never in plain text. Sessions honour “Remember me” and automatically expire (12h by default, 30 days when remembered). Repeated failed sign-ins are temporarily locked out. Registered accounts get the <b>Editor</b> role and are signed in automatically after creation. The Administrator tab unlocks automatically for Administrator sessions, or with the demo credential below. Users added from the Administrator panel instead receive a one-time <b>invite code</b> to activate their account and set their own password, and an Administrator can reset any user's password from Account Administration at any time — every reset is written to the audit trail.
+            </div>
+            <div style="background:#fff7ed;border:1px solid #fcd9a8;border-radius:10px;padding:14px;font-size:12.5px;margin-top:10px;color:#7c4a03">
+              ⚠️ <b>Deployment notice:</b> this is a self-contained, client-side application — all accounts, sessions and the audit trail live in this browser's local storage only, with no backend server enforcing access control. There are no default or demo credentials; the first person to open the app creates the Administrator account, and every account after that is created by an Administrator and activated via a one-time invite code. Anyone with script-execution access to this page (e.g. browser DevTools) can still bypass the client-side checks, so this should not be the sole safeguard for sensitive data — a production deployment should ultimately authenticate against a real backend.
             </div>
           </div>
         </div>
@@ -639,10 +658,9 @@ table.mpd{border-collapse:collapse;width:100%;font-size:12px;min-width:1150px;fo
           <div class="lock-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
           <h2>Administrator Access</h2>
           <p>Administrator sessions (top-level login) unlock this area automatically.</p>
-          <input class="inp" id="admUser" placeholder="Username" style="width:100%;margin-bottom:12px">
+          <input class="inp" id="admUser" placeholder="Username or email" style="width:100%;margin-bottom:12px">
           <input class="inp" id="admPass" type="password" placeholder="Password" style="width:100%;margin-bottom:12px">
           <button class="btn btn-primary btn-block" onclick="adminLogin()">Sign In</button>
-          <div class="hint-box">🔑 Demo: <b>admin</b> / <b>admin123</b></div>
         </div>
         <div id="adminPanel" hidden>
           <div class="card toolbar" style="border-left:4px solid var(--gold)">
@@ -742,53 +760,123 @@ function flattenTree(nodes,prefix,depth,romanFlag,inheritKind){
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
+
+/* ================= SECURITY HELPERS ================= */
+function escHtml(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function secureRandomBytes(n){const a=new Uint8Array(n);(window.crypto||window.msCrypto).getRandomValues(a);return a;}
+function secureRandomChars(charset,len){
+  const max=256-(256%charset.length); // rejection sampling to avoid modulo bias
+  let out='';
+  while(out.length<len){
+    const buf=secureRandomBytes(len-out.length);
+    for(let i=0;i<buf.length&&out.length<len;i++){if(buf[i]<max)out+=charset[buf[i]%charset.length];}
+  }
+  return out;
+}
+function randomHex(nBytes){return Array.from(secureRandomBytes(nBytes)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+
+/* ================= RATE LIMITING (client-side, best-effort) ================= */
+const LS_ATTEMPTS='dbe_fcy_attempts_v1';
+function attemptStore(){try{return JSON.parse(lsGet(LS_ATTEMPTS))||{};}catch(e){return {};}}
+function attemptSave(o){lsSet(LS_ATTEMPTS,JSON.stringify(o));}
+function attemptKey(kind,id){return kind+':'+(id||'').toLowerCase();}
+function checkLockout(kind,id){
+  const store=attemptStore(),rec=store[attemptKey(kind,id)];
+  if(rec&&rec.lockUntil&&rec.lockUntil>Date.now())return Math.ceil((rec.lockUntil-Date.now())/1000);
+  return 0;
+}
+function recordFailure(kind,id){
+  const store=attemptStore(),k=attemptKey(kind,id);
+  const rec=store[k]||{count:0,lockUntil:0};
+  rec.count++;
+  if(rec.count>=5){rec.lockUntil=Date.now()+Math.min(15*60000,Math.pow(2,rec.count-5)*30000);}
+  store[k]=rec;attemptSave(store);
+}
+function clearFailures(kind,id){const store=attemptStore();delete store[attemptKey(kind,id)];attemptSave(store);}
+
 let MEM_SESSION=null;
 const LS_SESS='dbe_fcy_session_v7b';
+const SESSION_TTL_REMEMBER=30*24*60*60*1000;   // 30 days
+const SESSION_TTL_DEFAULT=12*60*60*1000;       // 12 hours
 function setSession(s,remember){
-  MEM_SESSION=s;
+  const withExp=Object.assign({},s,{exp:Date.now()+(remember?SESSION_TTL_REMEMBER:SESSION_TTL_DEFAULT)});
+  MEM_SESSION=withExp;
   try{sessionStorage.removeItem(LS_SESS);}catch(e){}
   try{localStorage.removeItem(LS_SESS);}catch(e){}
-  if(remember){lsSet(LS_SESS,JSON.stringify(s));}
-  else{try{sessionStorage.setItem(LS_SESS,JSON.stringify(s));}catch(e){}}
+  if(remember){lsSet(LS_SESS,JSON.stringify(withExp));}
+  else{try{sessionStorage.setItem(LS_SESS,JSON.stringify(withExp));}catch(e){}}
+}
+function isValidSessionShape(v){
+  return !!v&&typeof v==='object'&&typeof v.email==='string'&&typeof v.role==='string'&&['Administrator','Manager','Encoder','Auditor','Editor','Viewer'].includes(v.role);
 }
 function getSession(){
-  if(MEM_SESSION)return MEM_SESSION;
-  try{const v=(sessionStorage.getItem(LS_SESS))||localStorage.getItem(LS_SESS);return v?JSON.parse(v):null;}catch(e){return null;}
+  let v=MEM_SESSION;
+  if(!v){
+    try{const raw=(sessionStorage.getItem(LS_SESS))||localStorage.getItem(LS_SESS);v=raw?JSON.parse(raw):null;}catch(e){v=null;}
+  }
+  if(!isValidSessionShape(v)){if(v)clearSession();return null;}
+  if(v.exp&&v.exp<Date.now()){clearSession();return null;}
+  MEM_SESSION=v;
+  return v;
 }
 function clearSession(){MEM_SESSION=null;try{sessionStorage.removeItem(LS_SESS);}catch(e){}try{localStorage.removeItem(LS_SESS);}catch(e){}}
 
 /* ================= AUTH ================= */
 const LS_USERS='dbe_fcy_users_v7b';
 let AUTH_USERS=[];
-function hashCode(s){let h1=5381,h2=52711;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=((h1<<5)+h1+c)|0;h2=((h2<<5)+h2+c)|0;}return (h1>>>0).toString(16)+(h2>>>0).toString(16);}
-function hashPassword(pw,salt){return hashCode((salt||'')+'::'+pw+'::dbe-fcy');}
-function randSalt(){let s='';for(let i=0;i<12;i++)s+=Math.floor(Math.random()*16).toString(16);return s;}
-function mkUser(name,email,username,role,pw){const salt=randSalt();return {id:Date.now()+Math.floor(Math.random()*1e5),name:name,email:email,username:username,role:role,salt:salt,hash:hashPassword(pw,salt),activated:true,forceReset:false,inviteCode:null,inviteExpires:null};}
+// Legacy (v1) hash — kept ONLY to verify/upgrade pre-existing accounts created before the PBKDF2 migration. Never used for new passwords.
+function legacyHashCode(s){let h1=5381,h2=52711;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=((h1<<5)+h1+c)|0;h2=((h2<<5)+h2+c)|0;}return (h1>>>0).toString(16)+(h2>>>0).toString(16);}
+function legacyHashPassword(pw,salt){return legacyHashCode((salt||'')+'::'+pw+'::dbe-fcy');}
+const PBKDF2_ITERATIONS=150000;
+async function pbkdf2Hash(pw,saltHex){
+  const enc=new TextEncoder();
+  const saltBytes=new Uint8Array((saltHex.match(/.{1,2}/g)||[]).map(b=>parseInt(b,16)));
+  const keyMaterial=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:saltBytes,iterations:PBKDF2_ITERATIONS,hash:'SHA-256'},keyMaterial,256);
+  return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function hashPassword(pw,salt){
+  if(window.crypto&&window.crypto.subtle){try{return await pbkdf2Hash(pw,salt);}catch(e){/* fall through */}}
+  return legacyHashPassword(pw,salt); // very old / non-secure-context fallback only
+}
+function randSalt(){return randomHex(16);} // 128-bit cryptographically random salt
+async function mkUser(name,email,username,role,pw){
+  const salt=randSalt();
+  return {id:Date.now()+Math.floor(Math.random()*1e5),name:name,email:email,username:username,role:role,salt:salt,hash:await hashPassword(pw,salt),algo:'pbkdf2',activated:true,forceReset:false,inviteCode:null,inviteExpires:null};
+}
+// Verifies a password against a user record, transparently upgrading legacy (pre-PBKDF2) hashes on success.
+async function verifyAndMaybeUpgrade(user,pw){
+  if(!user||!user.hash)return false;
+  if(user.algo==='pbkdf2'){
+    return (await hashPassword(pw,user.salt||''))===user.hash;
+  }
+  // legacy record (no algo field, or algo!=='pbkdf2') — verify with old scheme, then upgrade
+  if(legacyHashPassword(pw,user.salt||'')===user.hash){
+    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';
+    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
+    return true;
+  }
+  return false;
+}
 const INVITE_TTL_MS=7*24*60*60*1000;
-function genInviteCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<8;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s.slice(0,4)+'-'+s.slice(4);}
-function genTempPassword(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';let s='';for(let i=0;i<12;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s;}
+function genInviteCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return secureRandomChars(chars,4)+'-'+secureRandomChars(chars,4);}
+function genTempPassword(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';return secureRandomChars(chars,12);}
 let FORCE_RESET_USER=null;
-const DEMO_CREDS=[['admin','admin123'],['admin@dbe.com.et','admin123'],['demo','Demo@1234'],['demo@dbe.com.et','Demo@1234']];
-function demoMatch(u,p){const lu=(u||'').toLowerCase();return DEMO_CREDS.some(c=>c[0]===lu&&c[1]===p);}
-function seedUsers(){
+async function seedUsers(){
   let users=[];
   try{users=JSON.parse(lsGet(LS_USERS))||[];}catch(e){users=[];}
   if(!Array.isArray(users))users=[];
-  users=users.filter(u=>!(((u.username==='admin'||u.username==='demo')&&typeof u.hash==='string'&&u.hash.length===64)));
-  if(!users.some(u=>u.username==='admin'))users.push(mkUser('System Administrator','admin@dbe.com.et','admin','Administrator','admin123'));
-  if(!users.some(u=>u.username==='demo'))users.push(mkUser('Demo Analyst','demo@dbe.com.et','demo','Editor','Demo@1234'));
   AUTH_USERS=users;
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
 }
-function resetDemoAccounts(){lsDel(LS_USERS);seedUsers();showAuthView('login');showToast('Demo accounts reset — use admin / admin123','success');}
 function showAuthView(v){
   $('#authLoginView').hidden=v!=='login';
+  $('#authSetupView').hidden=v!=='setup';
   $('#authRegView').hidden=v!=='register';
   $('#authForgotView').hidden=v!=='forgot';
   $('#authActivateView').hidden=v!=='activate';
   $('#authForceResetView').hidden=v!=='forcereset';
   $('#loginBanner').hidden=true;$('#regBanner').hidden=true;$('#fgSuccess').hidden=true;
-  $('#actBanner').hidden=true;$('#frBanner').hidden=true;
+  $('#actBanner').hidden=true;$('#frBanner').hidden=true;$('#setupBanner').hidden=true;
 }
 function startForceReset(user){
   FORCE_RESET_USER=user;
@@ -796,7 +884,7 @@ function startForceReset(user){
   $('#frStrengthBar').style.width='0';$('#frStrengthTxt').textContent='';
   showAuthView('forcereset');
 }
-const EMAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE=/^[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 function passwordIssues(pw){
   const probs=[];
   if(pw.length<8)probs.push('at least 8 characters');
@@ -830,32 +918,56 @@ function setupAuth(){
     b.textContent=showing?'🙈':'👁';
     b.setAttribute('aria-label',showing?'Hide password':'Show password');
   }));
-  $('#toRegister').addEventListener('click',()=>showAuthView('register'));
   $('#toLogin').addEventListener('click',()=>showAuthView('login'));
   $('#toForgot').addEventListener('click',()=>showAuthView('forgot'));
   $('#fgBack').addEventListener('click',()=>showAuthView('login'));
   $('#toActivate').addEventListener('click',()=>showAuthView('activate'));
   $('#actBack').addEventListener('click',()=>showAuthView('login'));
-  $('#resetDemo').addEventListener('click',resetDemoAccounts);
   $('#logoutBtn').addEventListener('click',logout);
-  $('#loginForm').addEventListener('submit',e=>{
+  $('#suPass').addEventListener('input',()=>{
+    const pw=$('#suPass').value,sc=strengthScore(pw);
+    const bar=$('#suStrengthBar'),txt=$('#suStrengthTxt');
+    const pct=[0,20,40,60,80,100][sc]||0;
+    const col=sc<=1?'#ef4444':sc<=2?'#f59e0b':sc<=3?'#eab308':'#22c55e';
+    bar.style.width=pct+'%';bar.style.background=col;
+    txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
+    txt.style.color=col;
+  });
+  $('#setupForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const name=$('#suName').value.trim(),email=$('#suEmail').value.trim(),pw=$('#suPass').value,pw2=$('#suPass2').value;
+    let ok=true;
+    $('#suNameErr').textContent=(name.length>=3)?'':'Full name (min 3 characters) is required';if(name.length<3)ok=false;
+    $('#suEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
+    const issues=passwordIssues(pw);
+    $('#suPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
+    $('#suPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
+    if(!ok)return;
+    if(AUTH_USERS.length>0){$('#setupBanner').textContent='Setup has already been completed on this device. Please sign in.';$('#setupBanner').hidden=false;showAuthView('login');return;}
+    const user=await mkUser(name,email,email.split('@')[0],'Administrator',pw);
+    AUTH_USERS.push(user);
+    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
+    addAudit('Setup complete',email+' created the first Administrator account');
+    setSession({name:user.name,email:user.email,role:user.role,at:Date.now()},true);
+    enterApp(getSession());
+    showToast('Administrator account created — you are now signed in','success');
+  });
+  $('#loginForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const u=$('#liUser').value.trim(),p=$('#liPass').value;
     let ok=true;
     $('#liUserErr').textContent=u?'':'Email/username is required';if(!u)ok=false;
     $('#liPassErr').textContent=p?'':'Password is required';if(!p)ok=false;
     if(!ok)return;
+    const lockSecs=checkLockout('login',u);
+    if(lockSecs){$('#loginBanner').textContent='Too many failed attempts. Try again in '+lockSecs+'s.';$('#loginBanner').hidden=false;return;}
     const lu=u.toLowerCase();
     let user=AUTH_USERS.find(x=>(x.email||'').toLowerCase()===lu||(x.username||'').toLowerCase()===lu);
-    if(!user&&demoMatch(u,p)){
-      user= lu.indexOf('demo')===0
-        ? {name:'Demo Analyst',email:'demo@dbe.com.et',role:'Editor'}
-        : {name:'System Administrator',email:'admin@dbe.com.et',role:'Administrator'};
-    }
-    if(!user){$('#loginBanner').textContent='No account matches that email/username. Try admin / admin123 or use “Reset demo accounts”.';$('#loginBanner').hidden=false;return;}
+    if(!user){recordFailure('login',u);$('#loginBanner').textContent='No account matches that email/username. Ask your Administrator for an invite code, or use “Forgot password?”.';$('#loginBanner').hidden=false;return;}
     if(user.activated===false){$('#loginBanner').textContent='This account is pending activation. Use your invite code (see “Have an invite code?” below) to activate it first.';$('#loginBanner').hidden=false;return;}
-    const h=hashPassword(p,user.salt||'');
-    if(h!==user.hash&&!demoMatch(u,p)){$('#loginBanner').textContent='Incorrect password. Try again, or use “Forgot password?” / “Reset demo accounts”.';$('#loginBanner').hidden=false;return;}
+    const passOk=await verifyAndMaybeUpgrade(user,p);
+    if(!passOk){recordFailure('login',u);$('#loginBanner').textContent='Incorrect password. Try again, or use “Forgot password?”.';$('#loginBanner').hidden=false;return;}
+    clearFailures('login',u);
     if(user.forceReset){startForceReset(user);return;}
     setSession({name:user.name,email:user.email,role:user.role,at:Date.now()},$('#liRemember').checked);
     addAudit('Login',(user.email||u)+' signed in');
@@ -870,7 +982,7 @@ function setupAuth(){
     txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
     txt.style.color=col;
   });
-  $('#regForm').addEventListener('submit',e=>{
+  $('#regForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const name=$('#rgName').value.trim(),email=$('#rgEmail').value.trim(),pw=$('#rgPass').value,pw2=$('#rgPass2').value;
     let ok=true;
@@ -883,7 +995,7 @@ function setupAuth(){
     if(AUTH_USERS.some(x=>(x.email||'').toLowerCase()===email.toLowerCase())){
       $('#regBanner').textContent='An account with this email already exists. Sign in instead.';$('#regBanner').hidden=false;return;
     }
-    const user=mkUser(name,email,email.split('@')[0],'Editor',pw);
+    const user=await mkUser(name,email,email.split('@')[0],'Editor',pw);
     AUTH_USERS.push(user);
     lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
     addAudit('Account created',email+' registered (Editor)');
@@ -896,7 +1008,7 @@ function setupAuth(){
     const email=$('#fgEmail').value.trim();
     $('#fgEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';
     if(!EMAIL_RE.test(email))return;
-    $('#fgSuccess').textContent='If an account exists for '+email+', a password reset link has been sent. (Demo: contact the Administrator or use “Reset demo accounts”.)';
+    $('#fgSuccess').textContent='If an account exists for '+email+', a password reset link has been sent. (In this deployment, ask your Administrator to reset your password from Account Administration.)';
     $('#fgSuccess').hidden=false;
   });
   $('#actPass').addEventListener('input',()=>{
@@ -908,7 +1020,7 @@ function setupAuth(){
     txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
     txt.style.color=col;
   });
-  $('#actForm').addEventListener('submit',e=>{
+  $('#actForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const email=$('#actUser').value.trim(),code=$('#actCode').value.trim().toUpperCase(),pw=$('#actPass').value,pw2=$('#actPass2').value;
     let ok=true;
@@ -918,11 +1030,14 @@ function setupAuth(){
     $('#actPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
     $('#actPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
     if(!ok)return;
+    const lockSecs=checkLockout('activate',email);
+    if(lockSecs){$('#actBanner').textContent='Too many attempts. Try again in '+lockSecs+'s.';$('#actBanner').hidden=false;return;}
     const user=AUTH_USERS.find(x=>(x.email||'').toLowerCase()===email.toLowerCase());
-    if(!user||user.activated!==false){$('#actBanner').textContent='No pending invite was found for that email address.';$('#actBanner').hidden=false;return;}
-    if(!user.inviteCode||user.inviteCode.toUpperCase()!==code){$('#actBanner').textContent='That invite code is not valid for this account.';$('#actBanner').hidden=false;return;}
+    if(!user||user.activated!==false){recordFailure('activate',email);$('#actBanner').textContent='No pending invite was found for that email address.';$('#actBanner').hidden=false;return;}
+    if(!user.inviteCode||user.inviteCode.toUpperCase()!==code){recordFailure('activate',email);$('#actBanner').textContent='That invite code is not valid for this account.';$('#actBanner').hidden=false;return;}
     if(user.inviteExpires&&user.inviteExpires<Date.now()){$('#actBanner').textContent='This invite code has expired. Ask your Administrator to generate a new one.';$('#actBanner').hidden=false;return;}
-    user.salt=randSalt();user.hash=hashPassword(pw,user.salt);user.activated=true;user.forceReset=false;user.inviteCode=null;user.inviteExpires=null;
+    clearFailures('activate',email);
+    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';user.activated=true;user.forceReset=false;user.inviteCode=null;user.inviteExpires=null;
     lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
     addAudit('Account activated',user.email+' activated their account via invite code ('+user.role+')');
     setSession({name:user.name,email:user.email,role:user.role,at:Date.now()},true);
@@ -938,7 +1053,7 @@ function setupAuth(){
     txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
     txt.style.color=col;
   });
-  $('#frForm').addEventListener('submit',e=>{
+  $('#frForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const pw=$('#frPass').value,pw2=$('#frPass2').value;
     let ok=true;
@@ -948,7 +1063,7 @@ function setupAuth(){
     if(!ok)return;
     const user=FORCE_RESET_USER;
     if(!user){showAuthView('login');return;}
-    user.salt=randSalt();user.hash=hashPassword(pw,user.salt);user.forceReset=false;
+    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';user.forceReset=false;
     lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
     addAudit('Password changed',user.email+' completed an administrator-required password reset');
     FORCE_RESET_USER=null;
@@ -1175,7 +1290,7 @@ function renderHome(){
   ].map(k=>'<div class="kpi" style="--kc:'+k.c+'"><div class="lbl">'+k.lbl+'</div><div class="val">'+k.val+'</div><div class="sub">'+k.sub+'</div></div>').join('');
   $('#hlYearPill').textContent='FY '+y;
   $('#homeHighlights').innerHTML=[
-    ['🔐','Sign in with <b>admin / admin123</b> (or demo@dbe.com.et / Demo@1234). “Reset demo accounts” on the login page fixes any credential issue.'],
+    ['🔐','On first use, create your Administrator account on the sign-in page — there are no default credentials. After that, sign in with your own email and password, or activate an Administrator-issued invite code.'],
     ['🔎','Reports show <b>only applicable items</b> (Plan or Actual activity) with <b>auto-regenerated SN</b> and <b>main descriptions only</b>.'],
     ['📆','Monthly, Quarterly, Semi-Annual, Nine-Month and Annual templates generated live from monthly data.'],
     ['🧮','Pivot analytics with drill-down and CSV / Excel / PDF exports.']
@@ -1907,7 +2022,7 @@ function renameTemplate(id){const t=state.templates.find(x=>x.id===id);if(!t)ret
 function deleteTemplate(id){const t=state.templates.find(x=>x.id===id);if(!t)return;if(!confirm('Delete “'+t.name+'”?'))return;state.templates=state.templates.filter(x=>x.id!==id);saveTemplates();renderTemplates();showToast('Deleted','warn');}
 function shareTemplate(id){const t=state.templates.find(x=>x.id===id);if(!t)return;const json=JSON.stringify({shared:'DBE FCY Pivot Template',name:t.name,cfg:t.cfg},null,2);const done=()=>showToast('Template JSON copied','success');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(json).then(done).catch(()=>fallbackCopy(json,done));else fallbackCopy(json,done);}
 function fallbackCopy(txt,cb){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');cb();}catch(e){showToast('Copy failed','error');}ta.remove();}
-function renderTemplates(){const el=$('#tplList');if(!el)return;if(!state.templates.length){el.innerHTML='<p class="muted" style="font-size:13px">No saved templates yet.</p>';return;}el.innerHTML=state.templates.map(t=>{const cfg=t.cfg;return '<div class="tpl-row"><div class="avatar" style="background:linear-gradient(135deg,#f5c518,#d97706);color:#3a2a04">📊</div><div style="flex:1;min-width:180px"><b style="font-size:13px">'+t.name+'</b><div class="muted" style="font-size:11.5px">Rows: '+cfg.rows.map(d=>PIVOT_DIMS[d].label).join(', ')+' • '+cap(cfg.agg)+' • '+cap(cfg.comparison)+'</div></div><button class="btn btn-primary btn-xs" onclick="loadTemplate('+t.id+')">▶ Open</button><button class="btn btn-ghost btn-xs" onclick="renameTemplate('+t.id+')">✎ Rename</button><button class="btn btn-ghost btn-xs" onclick="shareTemplate('+t.id+')">🔗 Share</button><button class="btn btn-danger btn-xs" onclick="deleteTemplate('+t.id+')">🗑</button></div>';}).join('');}
+function renderTemplates(){const el=$('#tplList');if(!el)return;if(!state.templates.length){el.innerHTML='<p class="muted" style="font-size:13px">No saved templates yet.</p>';return;}el.innerHTML=state.templates.map(t=>{const cfg=t.cfg;return '<div class="tpl-row"><div class="avatar" style="background:linear-gradient(135deg,#f5c518,#d97706);color:#3a2a04">📊</div><div style="flex:1;min-width:180px"><b style="font-size:13px">'+escHtml(t.name)+'</b><div class="muted" style="font-size:11.5px">Rows: '+escHtml(cfg.rows.map(d=>PIVOT_DIMS[d].label).join(', '))+' • '+escHtml(cap(cfg.agg))+' • '+escHtml(cap(cfg.comparison))+'</div></div><button class="btn btn-primary btn-xs" onclick="loadTemplate('+t.id+')">▶ Open</button><button class="btn btn-ghost btn-xs" onclick="renameTemplate('+t.id+')">✎ Rename</button><button class="btn btn-ghost btn-xs" onclick="shareTemplate('+t.id+')">🔗 Share</button><button class="btn btn-danger btn-xs" onclick="deleteTemplate('+t.id+')">🗑</button></div>';}).join('');}
 function initPivot(){
   $('#pbRows').innerHTML=ROWS_ORDER.map(d=>'<label class="ckb"><input type="checkbox" data-grp="rows" value="'+d+'" '+(state.pivot.rows.includes(d)?'checked':'')+'> '+PIVOT_DIMS[d].label+'</label>').join('');
   $('#pbCols').innerHTML=COLS_ORDER.map(d=>'<label class="ckb"><input type="checkbox" data-grp="cols" value="'+d+'" '+(state.pivot.cols.includes(d)?'checked':'')+'> '+PIVOT_DIMS[d].label+'</label>').join('');
@@ -2057,12 +2172,12 @@ function resetDataset(){const dsKey=state.diDs;if(!confirm('Reset FY '+state.yea
 
 /* ================= HELP / ADMIN ================= */
 const FAQ=[
-  ['Sign-in not working?','Use <b>admin / admin123</b> (or demo@dbe.com.et / Demo@1234). If a stale credential store is the cause, click “Reset demo accounts” on the login page.'],
+  ['Sign-in not working?','If this is the very first time the app is opened, you\u2019ll see a one-time setup screen to create the Administrator account — there are no default credentials. Otherwise, sign in with your own email/username and password, or ask your Administrator for a password reset or invite code.'],
   ['The Period Report showed “Cannot read properties of null (reading \'p1\')” before — is it fixed?','Yes. The EURO/FX row (calc “fx”) was missing from the Period Report column resolver; it is now resolved and the resolver is null-safe, so Quarterly, Semi-Annual, Nine-Month, Annual and Custom periods all render correctly.'],
   ['Which items appear in reports?','Only items with a non-zero Plan <i>or</i> Actual in the selected month/period (or cumulative). Items with neither are omitted and SN is regenerated (e.g. 2.1–2.5 → 2.1–2.3).'],
   ['Why are sub-descriptions hidden?','Reports show main descriptions only (e.g. “Foreign Currency Purchase from Local Market (…)” without “From NBE Auction” etc.). Sub-details remain editable in Data Input.'],
   ['How are period reports consolidated?','Inflows/outflows/EURO are summed from monthly reports; Ending = Beginning + Inflows − Outflows ± EURO; each period\u2019s beginning equals the previous period\u2019s ending.'],
-  ['Administrator tab?','Unlocks automatically for Administrator sessions, or sign in there with admin / admin123.'],
+  ['Administrator tab?','Unlocks automatically for Administrator sessions, or sign in there with your own Administrator email/username and password.'],
   ['How do new users get an account?','An Administrator adds them from Account Administration → User Management (name, email, role — including Manager, Encoder and Auditor). A unique, one-time invite code is generated; the user enters it under “Have an invite code?” on the sign-in page to activate their account and set their own password. The code expires after 7 days and cannot be reused.'],
   ['I forgot my password — what happens?','An Administrator can reset any user\u2019s password from Account Administration → User Management, regardless of role. This issues a temporary password and requires the user to set a new one on their next sign-in. Every reset is recorded in the audit trail.'],
   ['Why do report titles now show “June” instead of “Jun”?','All Monthly, Period and MP&D report titles and period descriptions use full month names for clarity on official/printed documents. Compact 3-letter abbreviations are still used in places like filenames, dropdown pickers and audit-log entries.'],
@@ -2079,7 +2194,7 @@ function renderAdmin(){
   $('#admNow').textContent='Session: '+(sess?sess.email:'local')+' • '+new Date().toLocaleString('en-GB');
   $('#setLock').checked=state.settings.planLocked;
   $('#dmStats').innerHTML=YEARS.map(y=>'FY '+y+': plan <b>'+countModified(y,'plan')+'</b>, actual <b>'+countModified(y,'actual')+'</b> modified').join('<br>');
-  let html=state.users.map((u,i)=>{const cls=u.role==='Administrator'?'adm':u.role==='Editor'?'edt':'vwr';const initials=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return '<div class="user-row"><div class="avatar">'+initials+'</div><div style="flex:1"><b style="font-size:13px">'+u.name+'</b><div class="muted" style="font-size:11.5px">'+(u.locked?'Primary account':'Member')+'</div></div><span class="role-tag '+cls+'">'+u.role+'</span>'+(u.locked?'':'<button class="btn btn-danger btn-sm" onclick="removeUser('+i+')">✕</button>')+'</div>';}).join('');
+  let html=state.users.map((u,i)=>{const cls=u.role==='Administrator'?'adm':u.role==='Editor'?'edt':'vwr';const initials=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();return '<div class="user-row"><div class="avatar">'+escHtml(initials)+'</div><div style="flex:1"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+(u.locked?'Primary account':'Member')+'</div></div><span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'+(u.locked?'':'<button class="btn btn-danger btn-sm" onclick="removeUser('+i+')">✕</button>')+'</div>';}).join('');
   html+='<div style="margin-top:14px;font-size:12px;font-weight:800;color:var(--muted)">LOGIN ACCOUNTS (auth store)</div>';
   html+=AUTH_USERS.map(u=>{
     const cls=u.role==='Administrator'?'adm':u.role==='Manager'?'mgr':u.role==='Encoder'?'enc':u.role==='Auditor'?'aud':u.role==='Editor'?'edt':'vwr';
@@ -2087,20 +2202,33 @@ function renderAdmin(){
     if(u.activated===false){status=(u.inviteExpires&&u.inviteExpires<Date.now())?'<span class="pill warn">Invite expired</span>':'<span class="pill warn">Invite pending</span>';}
     else if(u.forceReset){status='<span class="pill warn">Reset pending</span>';}
     const actions=(u.activated===false)
-      ? '<button class="btn btn-ghost btn-sm" onclick="adminResendInvite(\''+u.email+'\')">↻ New Invite Code</button>'
-      : '<button class="btn btn-ghost btn-sm" onclick="adminResetPassword(\''+u.email+'\')">🔑 Reset Password</button>';
-    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+u.name+'</b><div class="muted" style="font-size:11.5px">'+u.email+'</div></div><span class="role-tag '+cls+'">'+u.role+'</span>'+status+actions+'</div>';
+      ? '<button class="btn btn-ghost btn-sm" data-act="resend" data-email="'+escHtml(u.email)+'">↻ New Invite Code</button>'
+      : '<button class="btn btn-ghost btn-sm" data-act="reset" data-email="'+escHtml(u.email)+'">🔑 Reset Password</button>';
+    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+escHtml(u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+escHtml(u.email)+'</div></div><span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'+status+actions+'</div>';
   }).join('');
   $('#userList').innerHTML=html;
-  $('#auditBody').innerHTML=state.audit.length?state.audit.slice(0,80).map(l=>'<tr><td class="muted">'+l.t+'</td><td><b>'+l.user+'</b></td><td>'+l.action+'</td><td class="muted">'+l.detail+'</td></tr>').join(''):'<tr><td colspan="4" class="muted" style="text-align:center;padding:20px">No activity yet.</td></tr>';
+  $('#auditBody').innerHTML=state.audit.length?state.audit.slice(0,80).map(l=>'<tr><td class="muted">'+escHtml(l.t)+'</td><td><b>'+escHtml(l.user)+'</b></td><td>'+escHtml(l.action)+'</td><td class="muted">'+escHtml(l.detail)+'</td></tr>').join(''):'<tr><td colspan="4" class="muted" style="text-align:center;padding:20px">No activity yet.</td></tr>';
 }
-function adminLogin(){
+async function adminLogin(){
   const sess=getSession();
-  if($('#admUser').value.trim()==='admin'&&$('#admPass').value==='admin123'){state.adminLoggedIn=true;addAudit('Admin login','admin');renderAdmin();showToast('Administrator signed in','success');return;}
   if(sess&&sess.role==='Administrator'){state.adminLoggedIn=true;renderAdmin();showToast('Administrator session detected','success');return;}
+  const u=$('#admUser').value.trim(),p=$('#admPass').value;
+  const lockSecs=checkLockout('adminlogin',u);
+  if(lockSecs){showToast('Too many failed attempts. Try again in '+lockSecs+'s.','error');return;}
+  const acct=AUTH_USERS.find(x=>x.role==='Administrator'&&((x.email||'').toLowerCase()===u.toLowerCase()||(x.username||'').toLowerCase()===u.toLowerCase()));
+  const ok=acct&&acct.activated!==false&&await verifyAndMaybeUpgrade(acct,p);
+  if(ok){clearFailures('adminlogin',u);state.adminLoggedIn=true;addAudit('Admin login',acct?acct.email:u);renderAdmin();showToast('Administrator signed in','success');return;}
+  recordFailure('adminlogin',u);
   showToast('Invalid credentials','error');
 }
 function adminLogout(){state.adminLoggedIn=false;renderAdmin();showToast('Admin logged out','warn');}
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('[data-act]');
+  if(!btn)return;
+  const email=btn.dataset.email||'';
+  if(btn.dataset.act==='resend')adminResendInvite(email);
+  else if(btn.dataset.act==='reset')adminResetPassword(email);
+});
 function addUser(){
   const n=$('#newUserName').value.trim(),em=$('#newUserEmail').value.trim(),rr=$('#newUserRole').value;
   if(!n){showToast('Enter a name','error');return;}
@@ -2126,12 +2254,12 @@ function adminResendInvite(email){
   showInviteModal(u,u.inviteCode);
   showToast('New invite code generated','success');
 }
-function adminResetPassword(email){
+async function adminResetPassword(email){
   const u=AUTH_USERS.find(x=>(x.email||'').toLowerCase()===email.toLowerCase());
   if(!u){showToast('User not found','error');return;}
   if(!confirm('Reset the password for '+u.email+' ('+u.role+')? A new temporary password will be generated and this action will be recorded in the audit trail.'))return;
   const temp=genTempPassword();
-  u.salt=randSalt();u.hash=hashPassword(temp,u.salt);u.activated=true;u.forceReset=true;u.inviteCode=null;u.inviteExpires=null;
+  u.salt=randSalt();u.hash=await hashPassword(temp,u.salt);u.algo='pbkdf2';u.activated=true;u.forceReset=true;u.inviteCode=null;u.inviteExpires=null;
   lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
   const sess=getSession();
   addAudit('Password reset',(sess?sess.email:'Administrator')+' reset the password for '+u.email+' ('+u.role+')');
@@ -2143,18 +2271,18 @@ function showInviteModal(user,code){
   const exp=new Date(user.inviteExpires).toLocaleString('en-GB');
   $('#modalTitle').textContent='Invite Code — '+user.name;
   $('#modalBody').innerHTML='<div style="padding:6px 2px;font-size:13px;line-height:1.7">'
-    +'<p>A login account for <b>'+user.email+'</b> ('+user.role+') has been created and is <b>pending activation</b>.</p>'
+    +'<p>A login account for <b>'+escHtml(user.email)+'</b> ('+escHtml(user.role)+') has been created and is <b>pending activation</b>.</p>'
     +'<p style="margin-top:10px">Share this one-time invite code with the user through a secure channel. On the sign-in page they should choose “Have an invite code?” to activate their account and set their own password.</p>'
-    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:22px;font-weight:800;letter-spacing:.08em">'+code+'</div>'
+    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:22px;font-weight:800;letter-spacing:.08em">'+escHtml(code)+'</div>'
     +'<p class="muted" style="font-size:12px">Expires '+exp+'. The code becomes invalid immediately after it is used.</p></div>';
   $('#modal').hidden=false;
 }
 function showResetModal(user,temp){
   $('#modalTitle').textContent='Password Reset — '+user.name;
   $('#modalBody').innerHTML='<div style="padding:6px 2px;font-size:13px;line-height:1.7">'
-    +'<p>The password for <b>'+user.email+'</b> ('+user.role+') has been reset.</p>'
+    +'<p>The password for <b>'+escHtml(user.email)+'</b> ('+escHtml(user.role)+') has been reset.</p>'
     +'<p style="margin-top:10px">Share this temporary password with the user through a secure channel. They will be required to set a new password immediately after signing in with it.</p>'
-    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:20px;font-weight:800;letter-spacing:.04em">'+temp+'</div></div>';
+    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:20px;font-weight:800;letter-spacing:.04em">'+escHtml(temp)+'</div></div>';
   $('#modal').hidden=false;
 }
 function removeUser(i){const u=state.users[i];if(u.locked)return;state.users.splice(i,1);persist();renderAdmin();showToast('User removed','warn');}
@@ -2245,9 +2373,9 @@ function restoreReportTablesAfterPrint(){
     if('origMinW' in t.dataset){t.style.minWidth=t.dataset.origMinW;delete t.dataset.origMinW;}
   });
 }
-function init(){
+async function init(){
   loadData();
-  seedUsers();
+  await seedUsers();
   setupAuth();
   applyLogo();
   window.addEventListener('beforeprint',()=>{
@@ -2258,6 +2386,7 @@ function init(){
   window.addEventListener('afterprint',restoreReportTablesAfterPrint);
   const s=getSession();
   if(s){enterApp(s);}
+  else if(AUTH_USERS.length===0){showAuthView('setup');}
   else{showAuthView('login');}
 }
 init();
