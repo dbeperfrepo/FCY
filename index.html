@@ -267,34 +267,17 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
         <div class="auth-sub">Access the FCY Cashflow Reporting Suite</div>
         <div class="aerr" id="loginBanner" hidden></div>
         <form id="loginForm" novalidate>
-          <div class="afield"><label for="liUser">Email or username</label><input id="liUser" type="text" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="liUserErr"></span></div>
+          <div class="afield"><label for="liUser">Email address</label><input id="liUser" type="email" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="liUserErr"></span></div>
           <div class="afield"><label for="liPass">Password</label>
             <div class="pwrap"><input id="liPass" type="password" autocomplete="current-password" placeholder="••••••••"><button type="button" class="eye" data-eye="liPass" aria-label="Show/Hide password">👁</button></div>
             <span class="ferr" id="liPassErr"></span></div>
           <div class="arow">
-            <label class="remember"><input type="checkbox" id="liRemember"> Remember me</label>
+            <span></span>
             <button type="button" class="alink" id="toForgot">Forgot password?</button>
           </div>
           <button class="btn btn-primary btn-block" type="submit">Sign In</button>
         </form>
-        <div class="auth-switch">New here? <button class="alink" id="toRegister">Create an account</button> • Have an invite code? <button class="alink" id="toActivate">Activate it</button></div>
-      </div>
-      <div id="authSetupView" hidden>
-        <div class="auth-title">Welcome — set up your Administrator account</div>
-        <div class="auth-sub">No accounts exist yet. Create the first Administrator account to finish setting up this application. No default or demo credentials are included.</div>
-        <div class="aerr" id="setupBanner" hidden></div>
-        <form id="setupForm" novalidate>
-          <div class="afield"><label for="suName">Full name</label><input id="suName" type="text" autocomplete="name" placeholder="Your full name"><span class="ferr" id="suNameErr"></span></div>
-          <div class="afield"><label for="suEmail">Email address</label><input id="suEmail" type="email" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="suEmailErr"></span></div>
-          <div class="afield"><label for="suPass">Password</label>
-            <div class="pwrap"><input id="suPass" type="password" autocomplete="new-password" placeholder="Min 8 chars, Aa + number"><button type="button" class="eye" data-eye="suPass" aria-label="Show/Hide password">👁</button></div>
-            <div class="strength"><i id="suStrengthBar"></i></div><span class="stext" id="suStrengthTxt"></span>
-            <span class="ferr" id="suPassErr"></span></div>
-          <div class="afield"><label for="suPass2">Confirm password</label>
-            <div class="pwrap"><input id="suPass2" type="password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="eye" data-eye="suPass2" aria-label="Show/Hide password">👁</button></div>
-            <span class="ferr" id="suPass2Err"></span></div>
-          <button class="btn btn-primary btn-block" type="submit">Create Administrator Account</button>
-        </form>
+        <div class="auth-switch">New here? <button class="alink" id="toRegister">Create an account</button></div>
       </div>
       <div id="authRegView" hidden>
         <div class="auth-title">Create account</div>
@@ -325,39 +308,6 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
           <button class="btn btn-primary btn-block" type="submit">Send Reset Link</button>
         </form>
         <div class="auth-switch"><button class="alink" id="fgBack">← Back to sign in</button></div>
-      </div>
-      <div id="authActivateView" hidden>
-        <div class="auth-title">Activate your account</div>
-        <div class="auth-sub">Enter the one-time invite code your Administrator gave you, then set your password.</div>
-        <div class="aerr" id="actBanner" hidden></div>
-        <form id="actForm" novalidate>
-          <div class="afield"><label for="actUser">Email address</label><input id="actUser" type="email" autocomplete="username" placeholder="you@dbe.com.et"><span class="ferr" id="actUserErr"></span></div>
-          <div class="afield"><label for="actCode">Invite code</label><input id="actCode" type="text" autocomplete="one-time-code" placeholder="XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.06em"><span class="ferr" id="actCodeErr"></span></div>
-          <div class="afield"><label for="actPass">New password</label>
-            <div class="pwrap"><input id="actPass" type="password" autocomplete="new-password" placeholder="Min 8 chars, Aa + number"><button type="button" class="eye" data-eye="actPass" aria-label="Show/Hide password">👁</button></div>
-            <div class="strength"><i id="actStrengthBar"></i></div><span class="stext" id="actStrengthTxt"></span>
-            <span class="ferr" id="actPassErr"></span></div>
-          <div class="afield"><label for="actPass2">Confirm password</label>
-            <div class="pwrap"><input id="actPass2" type="password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="eye" data-eye="actPass2" aria-label="Show/Hide password">👁</button></div>
-            <span class="ferr" id="actPass2Err"></span></div>
-          <button class="btn btn-primary btn-block" type="submit">Activate &amp; Sign In</button>
-        </form>
-        <div class="auth-switch"><button class="alink" id="actBack">← Back to sign in</button></div>
-      </div>
-      <div id="authForceResetView" hidden>
-        <div class="auth-title">Set a new password</div>
-        <div class="auth-sub">An Administrator reset your password. Choose a new password to continue signing in.</div>
-        <div class="aerr" id="frBanner" hidden></div>
-        <form id="frForm" novalidate>
-          <div class="afield"><label for="frPass">New password</label>
-            <div class="pwrap"><input id="frPass" type="password" autocomplete="new-password" placeholder="Min 8 chars, Aa + number"><button type="button" class="eye" data-eye="frPass" aria-label="Show/Hide password">👁</button></div>
-            <div class="strength"><i id="frStrengthBar"></i></div><span class="stext" id="frStrengthTxt"></span>
-            <span class="ferr" id="frPassErr"></span></div>
-          <div class="afield"><label for="frPass2">Confirm password</label>
-            <div class="pwrap"><input id="frPass2" type="password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="eye" data-eye="frPass2" aria-label="Show/Hide password">👁</button></div>
-            <span class="ferr" id="frPass2Err"></span></div>
-          <button class="btn btn-primary btn-block" type="submit">Set Password &amp; Sign In</button>
-        </form>
       </div>
     </div>
     <p class="auth-foot">© 2026 DBE • Strategy &amp; Planning Directorate-Performance Division</p>
@@ -660,18 +610,9 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
       </section>
 
       <section id="tab-admin" class="tab-panel">
-        <div class="card auth-card" id="adminLogin">
-          <div class="lock-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <h2>Administrator Access</h2>
-          <p>Administrator sessions (top-level login) unlock this area automatically.</p>
-          <input class="inp" id="admUser" placeholder="Username or email" style="width:100%;margin-bottom:12px">
-          <input class="inp" id="admPass" type="password" placeholder="Password" style="width:100%;margin-bottom:12px">
-          <button class="btn btn-primary btn-block" onclick="adminLogin()">Sign In</button>
-        </div>
         <div id="adminPanel" hidden>
           <div class="card toolbar" style="border-left:4px solid var(--gold)">
-            <div class="left"><span style="font-size:20px">🛡️</span><div><b>Welcome back, Administrator</b><div class="muted" style="font-size:12px" id="admNow"></div></div></div>
-            <button class="btn btn-ghost btn-sm" onclick="adminLogout()">Log out</button>
+            <div class="left"><span style="font-size:20px">🛡️</span><div><b>Administration</b><div class="muted" style="font-size:12px" id="admNow"></div></div></div>
           </div>
           <div class="grid-2">
             <div class="card" id="admDataCard"><h3>💾 Data Management</h3>
@@ -701,17 +642,11 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
               </div>
             </div>
             <div class="card" id="admUsersCard"><h3>👥 User Management</h3><div id="userList"></div>
-              <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-                <input class="inp" id="newUserName" placeholder="Full name" style="flex:1;min-width:140px">
-                <input class="inp" id="newUserEmail" type="email" placeholder="Email address" style="flex:1;min-width:160px">
-                <select class="sel" id="newUserRole"><option>Administrator</option><option>Manager</option><option>Auditor</option><option selected>Data Encoder</option></select>
-                <button class="btn btn-primary btn-sm" onclick="addUser()">+ Add User &amp; Send Invite</button>
-              </div>
-              <div class="tbl-note" style="margin-top:10px">New users receive a unique, one-time invite code (shown after creation) to activate their account and set their own password on first sign-in. Administrators can reset any existing user's password, change role, edit individual privileges, or activate/deactivate an account below — every change is logged to the audit trail.</div>
+              <div class="tbl-note" style="margin-top:10px">New users create their own account with an invitation code above (issued by an Administrator) and set their own password — no admin ever sees or sets another user's password. Administrators can send a password-reset email, change role, edit individual privileges, or activate/deactivate an account below — every change is logged to the audit trail.</div>
             </div>
           </div>
           <div class="grid-2">
-            <div class="card" id="admAuditCard"><div class="card-h"><h3>📜 Audit Trail</h3><button class="btn btn-ghost btn-sm" onclick="clearAudit()">Clear Log</button></div>
+            <div class="card" id="admAuditCard"><div class="card-h"><h3>📜 Audit Trail</h3><button class="btn btn-ghost btn-sm" onclick="refreshAuditLog()">Refresh</button></div>
               <div style="max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px">
                 <table class="audit-tbl"><thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th></tr></thead><tbody id="auditBody"></tbody></table>
               </div>
@@ -911,7 +846,7 @@ const Store = (() => {
   async function loadAudit(state, limit = 200) {
     const { data, error } = await sb.from('audit_log').select('*').order('created_at', { ascending: false }).limit(limit);
     if (error) return;
-    state.audit = (data || []).map(r => ({ action: r.action, detail: r.detail, actor: r.actor, at: new Date(r.created_at).getTime() }));
+    state.audit = (data || []).map(r => ({ t: new Date(r.created_at).toLocaleString('en-GB'), user: r.actor, action: r.action, detail: r.detail }));
   }
 
   // Fire-and-forget insert, mirrors the old synchronous addAudit() call sites.
@@ -925,12 +860,18 @@ const Store = (() => {
   async function loadTemplates(state) {
     const { data, error } = await sb.from('templates').select('*').order('created_at', { ascending: false });
     if (error) return;
-    state.templates = (data || []).map(r => ({ id: r.id, name: r.name, ...r.cfg }));
+    state.templates = (data || []).map(r => ({ id: r.id, name: r.name, cfg: r.cfg }));
   }
 
   async function saveTemplate(name, cfg) {
-    const { error } = await sb.from('templates').insert({ name, cfg, created_by: Auth.currentUser()?.id });
-    if (error) console.error('saveTemplate failed', error);
+    const { data, error } = await sb.from('templates').insert({ name, cfg, created_by: Auth.currentUser()?.id }).select().single();
+    if (error) { console.error('saveTemplate failed', error); return null; }
+    return { id: data.id, name: data.name, cfg: data.cfg };
+  }
+
+  async function renameTemplate(id, name) {
+    const { error } = await sb.from('templates').update({ name }).eq('id', id);
+    if (error) console.error('renameTemplate failed', error);
   }
 
   async function deleteTemplate(id) {
@@ -984,7 +925,7 @@ const Store = (() => {
     loadAll, loadDatasets, persistYear, loadSettings, saveSettings,
     loadAudit, addAudit, loadTemplates, saveTemplate, deleteTemplate,
     loadSignupCodes, createSignupCode, revokeSignupCode,
-    loadProfiles, updateProfile
+    loadProfiles, updateProfile, renameTemplate
   };
 })();
 
@@ -1040,90 +981,21 @@ function secureRandomChars(charset,len){
 }
 function randomHex(nBytes){return Array.from(secureRandomBytes(nBytes)).map(b=>b.toString(16).padStart(2,'0')).join('');}
 
-/* ================= RATE LIMITING (client-side, best-effort) ================= */
-const LS_ATTEMPTS='dbe_fcy_attempts_v1';
-function attemptStore(){try{return JSON.parse(lsGet(LS_ATTEMPTS))||{};}catch(e){return {};}}
-function attemptSave(o){lsSet(LS_ATTEMPTS,JSON.stringify(o));}
-function attemptKey(kind,id){return kind+':'+(id||'').toLowerCase();}
-function checkLockout(kind,id){
-  const store=attemptStore(),rec=store[attemptKey(kind,id)];
-  if(rec&&rec.lockUntil&&rec.lockUntil>Date.now())return Math.ceil((rec.lockUntil-Date.now())/1000);
-  return 0;
-}
-function recordFailure(kind,id){
-  const store=attemptStore(),k=attemptKey(kind,id);
-  const rec=store[k]||{count:0,lockUntil:0};
-  rec.count++;
-  if(rec.count>=5){rec.lockUntil=Date.now()+Math.min(15*60000,Math.pow(2,rec.count-5)*30000);}
-  store[k]=rec;attemptSave(store);
-}
-function clearFailures(kind,id){const store=attemptStore();delete store[attemptKey(kind,id)];attemptSave(store);}
-
-let MEM_SESSION=null;
-const LS_SESS='dbe_fcy_session_v7b';
-const SESSION_TTL_REMEMBER=30*24*60*60*1000;   // 30 days
-const SESSION_TTL_DEFAULT=12*60*60*1000;       // 12 hours
-function setSession(s,remember){
-  const withExp=Object.assign({},s,{exp:Date.now()+(remember?SESSION_TTL_REMEMBER:SESSION_TTL_DEFAULT)});
-  MEM_SESSION=withExp;
-  try{sessionStorage.removeItem(LS_SESS);}catch(e){}
-  try{localStorage.removeItem(LS_SESS);}catch(e){}
-  if(remember){lsSet(LS_SESS,JSON.stringify(withExp));}
-  else{try{sessionStorage.setItem(LS_SESS,JSON.stringify(withExp));}catch(e){}}
-}
-function isValidSessionShape(v){
-  return !!v&&typeof v==='object'&&typeof v.email==='string'&&typeof v.role==='string'&&['Administrator','Manager','Data Encoder','Encoder','Auditor','Editor','Viewer'].includes(v.role);
-}
+/* ================= SESSION (delegates to Supabase Auth via the Auth module) =================
+   Real authentication, session tokens, and rate-limiting for failed sign-in attempts are all
+   handled server-side by Supabase now — this is just a thin, backwards-compatible shim so the
+   rest of the app (which calls getSession()) doesn't need to change. Nothing here can be forged
+   from the browser: it only ever reflects the profile Supabase's server actually returned for a
+   verified, signed session. */
 function getSession(){
-  let v=MEM_SESSION;
-  if(!v){
-    try{const raw=(sessionStorage.getItem(LS_SESS))||localStorage.getItem(LS_SESS);v=raw?JSON.parse(raw):null;}catch(e){v=null;}
-  }
-  if(!isValidSessionShape(v)){if(v)clearSession();return null;}
-  if(v.exp&&v.exp<Date.now()){clearSession();return null;}
-  MEM_SESSION=v;
-  return v;
+  const u=Auth.currentUser();
+  return u?{name:u.name,username:u.username,email:u.email,role:u.role,id:u.id}:null;
 }
-function clearSession(){MEM_SESSION=null;try{sessionStorage.removeItem(LS_SESS);}catch(e){}try{localStorage.removeItem(LS_SESS);}catch(e){}}
 
 /* ================= AUTH ================= */
-const LS_USERS='dbe_fcy_users_v7b';
-let AUTH_USERS=[];
-// Legacy (v1) hash — kept ONLY to verify/upgrade pre-existing accounts created before the PBKDF2 migration. Never used for new passwords.
-function legacyHashCode(s){let h1=5381,h2=52711;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=((h1<<5)+h1+c)|0;h2=((h2<<5)+h2+c)|0;}return (h1>>>0).toString(16)+(h2>>>0).toString(16);}
-function legacyHashPassword(pw,salt){return legacyHashCode((salt||'')+'::'+pw+'::dbe-fcy');}
-const PBKDF2_ITERATIONS=150000;
-async function pbkdf2Hash(pw,saltHex){
-  const enc=new TextEncoder();
-  const saltBytes=new Uint8Array((saltHex.match(/.{1,2}/g)||[]).map(b=>parseInt(b,16)));
-  const keyMaterial=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);
-  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:saltBytes,iterations:PBKDF2_ITERATIONS,hash:'SHA-256'},keyMaterial,256);
-  return Array.from(new Uint8Array(bits)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-async function hashPassword(pw,salt){
-  if(window.crypto&&window.crypto.subtle){try{return await pbkdf2Hash(pw,salt);}catch(e){/* fall through */}}
-  return legacyHashPassword(pw,salt); // very old / non-secure-context fallback only
-}
-function randSalt(){return randomHex(16);} // 128-bit cryptographically random salt
-async function mkUser(name,email,username,role,pw){
-  const salt=randSalt();
-  return {id:Date.now()+Math.floor(Math.random()*1e5),name:name,email:email,username:username,role:role,privileges:defaultPrivsForRole(role),active:true,salt:salt,hash:await hashPassword(pw,salt),algo:'pbkdf2',activated:true,forceReset:false,inviteCode:null,inviteExpires:null};
-}
-// Verifies a password against a user record, transparently upgrading legacy (pre-PBKDF2) hashes on success.
-async function verifyAndMaybeUpgrade(user,pw){
-  if(!user||!user.hash)return false;
-  if(user.algo==='pbkdf2'){
-    return (await hashPassword(pw,user.salt||''))===user.hash;
-  }
-  // legacy record (no algo field, or algo!=='pbkdf2') — verify with old scheme, then upgrade
-  if(legacyHashPassword(pw,user.salt||'')===user.hash){
-    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';
-    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    return true;
-  }
-  return false;
-}
-const INVITE_TTL_MS=7*24*60*60*1000;
+// Random invite-code text generator — the code string itself carries no privilege; the role it
+// grants and its validity (expiry/uses/revocation) are checked server-side by the Postgres
+// trigger in supabase/schema.sql whenever someone signs up with it, not by any client code.
 function genInviteCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return secureRandomChars(chars,4)+'-'+secureRandomChars(chars,4);}
 
 /* ================= ROLES & PRIVILEGES ================= */
@@ -1159,90 +1031,48 @@ const ROLE_DEFAULT_PRIVS={
 };
 function defaultPrivsForRole(role){return (ROLE_DEFAULT_PRIVS[role]||[]).slice();}
 function privsOf(user){return user&&Array.isArray(user.privileges)?user.privileges:defaultPrivsForRole(user?user.role:null);}
-// Resolve the AUTH_USERS record for the signed-in session (matches by username, falling back to email).
-function currentAuthUser(){
-  const sess=getSession();if(!sess)return null;
-  const uk=(sess.username||'').toLowerCase(),ek=(sess.email||'').toLowerCase();
-  return AUTH_USERS.find(x=>(uk&&(x.username||'').toLowerCase()===uk)||(ek&&(x.email||'').toLowerCase()===ek))||null;
-}
-// Central permission check — every sensitive action in the app calls this (or requireCan) before running,
-// not just to hide a button. NOTE (deployment limitation): this is a static, backend-less client-side app —
-// see the Authentication Notes panel in Help — so this is the strongest enforcement layer available here;
-// a production deployment must still re-check permissions against a real backend/API.
-function can(privKey){
-  const sess=getSession();
-  if(sess&&sess.role==='Administrator'&&!currentAuthUser())return true; // legacy/demo admin session w/o matching AUTH_USERS record
-  const u=currentAuthUser();
-  if(!u)return false;
-  if(u.active===false)return false;
-  return privsOf(u).includes(privKey);
-}
-function requireCan(privKey,actionLabel){
-  if(can(privKey))return true;
-  const label=(PRIV_DEFS.find(p=>p.key===privKey)||{}).label||actionLabel||privKey;
-  showToast('Access denied — you do not have "'+label+'" permission','error');
-  const sess=getSession();
-  addAudit('Access denied',(sess?(sess.username||sess.email||sess.name):'unknown')+' attempted "'+label+'" without permission');
-  return false;
-}
+// Central permission check — every sensitive action in the app calls this (or requireCan) before
+// running. This is now a thin wrapper: the real decision is made by Auth.can(), which reads the
+// privileges array Supabase returned for the current signed-in user. Nothing here can be spoofed
+// from devtools/localStorage — and every table those actions touch is independently protected by
+// the same privilege check again, server-side, via Row Level Security (see supabase/schema.sql).
+// A denied client-side check is a UX nicety; the RLS policy is what actually stops the write.
+function can(privKey){ return Auth.can(privKey); }
+function requireCan(privKey,actionLabel){ return Auth.requireCan(privKey,actionLabel,PRIV_DEFS); }
 
 /* ================= INVITATION CODE MANAGER (self sign-up) =================
-   Administrator-managed pool of codes. Each code carries the role it grants,
-   an optional expiry date and an optional usage limit (# of accounts it can create).
-   Distinct from the per-user single-use "activate" codes issued from Add User below. */
-const LS_INVITE_CODES='dbe_fcy_signup_codes_v1';
-function loadSignupCodes(){try{const v=JSON.parse(lsGet(LS_INVITE_CODES));return Array.isArray(v)?v:[];}catch(e){return [];}}
-function saveSignupCodes(list){lsSet(LS_INVITE_CODES,JSON.stringify(list));}
-let SIGNUP_CODES=loadSignupCodes();
-// One-time migration from the earlier single shared-code prototype, if present, so nothing is lost.
-(function migrateLegacySignupCode(){
-  const legacy=lsGet('dbe_fcy_signup_code_v1');
-  if(legacy&&!SIGNUP_CODES.length){
-    SIGNUP_CODES.push({id:Date.now(),code:legacy,role:'Data Encoder',expiresAt:null,maxUses:null,usedCount:0,revoked:false,createdAt:Date.now(),note:'Migrated from earlier single sign-up code'});
-    saveSignupCodes(SIGNUP_CODES);
-  }
-  lsDel('dbe_fcy_signup_code_v1');
-})();
-function findSignupCode(code){return SIGNUP_CODES.find(c=>c.code.toUpperCase()===(code||'').toUpperCase());}
-// Validates without consuming — used both by the sign-up form and to show status in the admin list.
+   Administrator-managed pool of codes. Each code carries the role it grants, an optional expiry
+   date, and an optional usage limit. Codes themselves live in Supabase (public.signup_codes) and
+   are validated + consumed atomically, server-side, by the handle_new_user() trigger — the client
+   only ever asks Supabase to create or revoke a code, never decides whether one is valid. */
+let SIGNUP_CODES=[];
+async function refreshSignupCodes(){ SIGNUP_CODES=await Store.loadSignupCodes(); }
+// Local display-only status (mirrors the server's own validity check, purely for the admin list UI).
 function signupCodeStatus(c){
   if(!c)return 'not_found';
   if(c.revoked)return 'revoked';
-  if(c.expiresAt&&c.expiresAt<Date.now())return 'expired';
-  if(c.maxUses!=null&&c.usedCount>=c.maxUses)return 'exhausted';
+  if(c.expires_at&&new Date(c.expires_at).getTime()<Date.now())return 'expired';
+  if(c.max_uses!=null&&c.used_count>=c.max_uses)return 'exhausted';
   return 'valid';
 }
-function consumeSignupCode(code){const c=findSignupCode(code);if(!c||signupCodeStatus(c)!=='valid')return null;c.usedCount++;saveSignupCodes(SIGNUP_CODES);return c;}
-function createSignupCode(role,expiresAt,maxUses,note){
-  const c={id:Date.now()+Math.floor(Math.random()*1e5),code:genInviteCode(),role:role,expiresAt:expiresAt||null,maxUses:(maxUses||maxUses===0)?maxUses:null,usedCount:0,revoked:false,createdAt:Date.now(),note:note||''};
-  SIGNUP_CODES.unshift(c);saveSignupCodes(SIGNUP_CODES);
-  addAudit('Invitation code generated','Role: '+role+(c.expiresAt?' • expires '+new Date(c.expiresAt).toLocaleDateString('en-GB'):' • no expiry')+(c.maxUses!=null?' • max uses '+c.maxUses:' • unlimited uses'));
-  return c;
+async function createSignupCode(role,expiresAt,maxUses,note){
+  const code=genInviteCode();
+  await Store.createSignupCode({code,role,expiresAt:expiresAt?new Date(expiresAt).toISOString():null,maxUses,note});
+  addAudit('Invitation code generated','Role: '+role+(expiresAt?' • expires '+new Date(expiresAt).toLocaleDateString('en-GB'):' • no expiry')+(maxUses!=null?' • max uses '+maxUses:' • unlimited uses'));
+  await refreshSignupCodes();
+  return code;
 }
-function revokeSignupCode(id){const c=SIGNUP_CODES.find(x=>x.id===id);if(!c||c.revoked)return;c.revoked=true;saveSignupCodes(SIGNUP_CODES);addAudit('Invitation code revoked','Code ending '+c.code.slice(-4)+' (role: '+c.role+')');}
-function genTempPassword(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';return secureRandomChars(chars,12);}
-let FORCE_RESET_USER=null;
-async function seedUsers(){
-  let users=[];
-  try{users=JSON.parse(lsGet(LS_USERS))||[];}catch(e){users=[];}
-  if(!Array.isArray(users))users=[];
-  AUTH_USERS=users;
+async function revokeSignupCode(id){
+  const c=SIGNUP_CODES.find(x=>x.id===id);if(!c||c.revoked)return;
+  await Store.revokeSignupCode(id);
+  addAudit('Invitation code revoked','Code ending '+c.code.slice(-4)+' (role: '+c.role+')');
+  await refreshSignupCodes();
 }
 function showAuthView(v){
   $('#authLoginView').hidden=v!=='login';
-  $('#authSetupView').hidden=v!=='setup';
   $('#authRegView').hidden=v!=='register';
   $('#authForgotView').hidden=v!=='forgot';
-  $('#authActivateView').hidden=v!=='activate';
-  $('#authForceResetView').hidden=v!=='forcereset';
   $('#loginBanner').hidden=true;$('#regBanner').hidden=true;$('#fgSuccess').hidden=true;
-  $('#actBanner').hidden=true;$('#frBanner').hidden=true;$('#setupBanner').hidden=true;
-}
-function startForceReset(user){
-  FORCE_RESET_USER=user;
-  $('#frPass').value='';$('#frPass2').value='';$('#frPassErr').textContent='';$('#frPass2Err').textContent='';
-  $('#frStrengthBar').style.width='0';$('#frStrengthTxt').textContent='';
-  showAuthView('forcereset');
 }
 const EMAIL_RE=/^[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 function passwordIssues(pw){
@@ -1255,11 +1085,15 @@ function passwordIssues(pw){
 }
 function strengthScore(pw){let s=0;if(pw.length>=8)s++;if(pw.length>=12)s++;if(/[A-Z]/.test(pw)&&/[a-z]/.test(pw))s++;if(/\d/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;return s;}
 let appStarted=false;
-function enterApp(sess){
+async function enterApp(sess){
   document.body.classList.add('authed');
   $('#userChip').hidden=false;$('#logoutBtn').hidden=false;
   $('#userChipName').textContent=sess.name||sess.username||sess.email;
   state.adminLoggedIn=false; // never inherit admin-panel access from a previous session on this device
+  // Everything the app shows is fetched fresh, per signed-in user, from Supabase here — not before
+  // login — since every one of these tables is protected by Row Level Security that requires a
+  // verified session; there is nothing meaningful to read before this point.
+  await loadData();
   if(!appStarted){setupApp();appStarted=true;}
   applyNavVisibility();
   switchTab('home');
@@ -1272,10 +1106,10 @@ function applyNavVisibility(){
     b.style.display=(!req||can(req))?'':'none';
   });
 }
-function logout(){
+async function logout(){
   const sess=getSession();
   addAudit('Logout',(sess?(sess.username||sess.email):'unknown')+' signed out');
-  clearSession();
+  await Auth.signOut();
   state.adminLoggedIn=false; // prevent admin-panel access leaking into the next session on this device
   document.body.classList.remove('authed');
   $('#userChip').hidden=true;$('#logoutBtn').hidden=true;
@@ -1287,66 +1121,31 @@ function setupAuth(){
     const inp=document.getElementById(b.dataset.eye);
     const showing=inp.type==='password';
     inp.type=showing?'text':'password';
-    b.textContent=showing?'🙈':'👁';
+    b.textContent=showing?'\ud83d\ude48':'\ud83d\udc41';
     b.setAttribute('aria-label',showing?'Hide password':'Show password');
   }));
   $('#toRegister').addEventListener('click',()=>showAuthView('register'));
   $('#toLogin').addEventListener('click',()=>showAuthView('login'));
   $('#toForgot').addEventListener('click',()=>showAuthView('forgot'));
   $('#fgBack').addEventListener('click',()=>showAuthView('login'));
-  $('#toActivate').addEventListener('click',()=>showAuthView('activate'));
-  $('#actBack').addEventListener('click',()=>showAuthView('login'));
   $('#logoutBtn').addEventListener('click',logout);
-  $('#suPass').addEventListener('input',()=>{
-    const pw=$('#suPass').value,sc=strengthScore(pw);
-    const bar=$('#suStrengthBar'),txt=$('#suStrengthTxt');
-    const pct=[0,20,40,60,80,100][sc]||0;
-    const col=sc<=1?'#ef4444':sc<=2?'#f59e0b':sc<=3?'#eab308':'#22c55e';
-    bar.style.width=pct+'%';bar.style.background=col;
-    txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
-    txt.style.color=col;
-  });
-  $('#setupForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const name=$('#suName').value.trim(),email=$('#suEmail').value.trim(),pw=$('#suPass').value,pw2=$('#suPass2').value;
-    let ok=true;
-    $('#suNameErr').textContent=(name.length>=3)?'':'Full name (min 3 characters) is required';if(name.length<3)ok=false;
-    $('#suEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
-    const issues=passwordIssues(pw);
-    $('#suPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
-    $('#suPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
-    if(!ok)return;
-    if(AUTH_USERS.length>0){$('#setupBanner').textContent='Setup has already been completed on this device. Please sign in.';$('#setupBanner').hidden=false;showAuthView('login');return;}
-    const user=await mkUser(name,email,email.split('@')[0],'Administrator',pw);
-    AUTH_USERS.push(user);
-    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    if(!SIGNUP_CODES.length)createSignupCode('Data Encoder',null,null,'Starter code — generated automatically at setup');
-    addAudit('Setup complete',email+' created the first Administrator account');
-    setSession({name:user.name,email:user.email,username:user.username,role:user.role,at:Date.now()},true);
-    enterApp(getSession());
-    showToast('Administrator account created — you are now signed in','success');
-  });
   $('#loginForm').addEventListener('submit',async e=>{
     e.preventDefault();
-    const u=$('#liUser').value.trim(),p=$('#liPass').value;
+    const email=$('#liUser').value.trim(),p=$('#liPass').value;
     let ok=true;
-    $('#liUserErr').textContent=u?'':'Email/username is required';if(!u)ok=false;
+    $('#liUserErr').textContent=EMAIL_RE.test(email)?'':'A valid email address is required';if(!EMAIL_RE.test(email))ok=false;
     $('#liPassErr').textContent=p?'':'Password is required';if(!p)ok=false;
     if(!ok)return;
-    const lockSecs=checkLockout('login',u);
-    if(lockSecs){$('#loginBanner').textContent='Too many failed attempts. Try again in '+lockSecs+'s.';$('#loginBanner').hidden=false;return;}
-    const lu=u.toLowerCase();
-    let user=AUTH_USERS.find(x=>(x.email||'').toLowerCase()===lu||(x.username||'').toLowerCase()===lu);
-    if(!user){recordFailure('login',u);$('#loginBanner').textContent='No account matches that email/username. Ask your Administrator for an invite code, or use “Forgot password?”.';$('#loginBanner').hidden=false;return;}
-    if(user.activated===false){$('#loginBanner').textContent='This account is pending activation. Use your invite code (see “Have an invite code?” below) to activate it first.';$('#loginBanner').hidden=false;return;}
-    if(user.active===false){recordFailure('login',u);$('#loginBanner').textContent='This account has been deactivated. Contact your Administrator.';$('#loginBanner').hidden=false;return;}
-    const passOk=await verifyAndMaybeUpgrade(user,p);
-    if(!passOk){recordFailure('login',u);$('#loginBanner').textContent='Incorrect password. Try again, or use “Forgot password?”.';$('#loginBanner').hidden=false;return;}
-    clearFailures('login',u);
-    if(user.forceReset){startForceReset(user);return;}
-    setSession({name:user.name,email:user.email,username:user.username,role:user.role,at:Date.now()},$('#liRemember').checked);
-    addAudit('Login',(user.username||user.email||u)+' signed in');
-    enterApp(getSession());
+    try{
+      const profile=await Auth.signIn({email,password:p});
+      if(!profile){$('#loginBanner').textContent='Signed in, but no profile was found for this account. Contact your Administrator.';$('#loginBanner').hidden=false;await Auth.signOut();return;}
+      if(profile.active===false){$('#loginBanner').textContent='This account has been deactivated. Contact your Administrator.';$('#loginBanner').hidden=false;await Auth.signOut();return;}
+      addAudit('Login',(profile.username||email)+' signed in');
+      enterApp(getSession());
+    }catch(err){
+      $('#loginBanner').textContent=(err&&err.message)?err.message:'Sign in failed. Check your email and password and try again.';
+      $('#loginBanner').hidden=false;
+    }
   });
   $('#rgPass').addEventListener('input',()=>{
     const pw=$('#rgPass').value,sc=strengthScore(pw);
@@ -1361,107 +1160,36 @@ function setupAuth(){
     e.preventDefault();
     const code=$('#rgCode').value.trim().toUpperCase(),name=$('#rgName').value.trim(),username=$('#rgUser').value.trim(),email=$('#rgEmail').value.trim(),pw=$('#rgPass').value,pw2=$('#rgPass2').value;
     let ok=true;
-    $('#rgCodeErr').textContent=code?'':'Administrator invitation code is required';if(!code)ok=false;
+    $('#rgCodeErr').textContent=code?'':'An invitation code is required';if(!code)ok=false;
     $('#rgNameErr').textContent=(name.length>=3)?'':'Full name (min 3 characters) is required';if(name.length<3)ok=false;
     const usernameOk=/^[a-zA-Z0-9._-]{3,32}$/.test(username);
     $('#rgUserErr').textContent=usernameOk?'':'Username must be 3-32 characters (letters, numbers, . _ -)';if(!usernameOk)ok=false;
-    $('#rgEmailErr').textContent=(!email||EMAIL_RE.test(email))?'':'Enter a valid email address, or leave blank';if(email&&!EMAIL_RE.test(email))ok=false;
+    $('#rgEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
     const issues=passwordIssues(pw);
     $('#rgPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
     $('#rgPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
     if(!ok)return;
-    const lockSecs=checkLockout('signup',username||'signup');
-    if(lockSecs){$('#regBanner').textContent='Too many failed attempts. Try again in '+lockSecs+'s.';$('#regBanner').hidden=false;return;}
-    const codeRec=findSignupCode(code);
-    if(signupCodeStatus(codeRec)!=='valid'){
-      recordFailure('signup',username||'signup');
-      const reason={not_found:'That invitation code was not found.',revoked:'That invitation code has been revoked.',expired:'That invitation code has expired.',exhausted:'That invitation code has reached its usage limit.'}[signupCodeStatus(codeRec)]||'That invitation code is not valid.';
-      $('#rgCodeErr').textContent='Invalid code.';
-      $('#regBanner').textContent=reason+' Ask your Administrator for a current invitation code.';$('#regBanner').hidden=false;return;
+    try{
+      // The invite code's validity and the role it grants are decided entirely server-side —
+      // by the handle_new_user() trigger in supabase/schema.sql — at the moment the account is
+      // created. Nothing the client sends here can grant a role the code doesn't actually carry.
+      await Auth.signUp({name,email,password:pw,inviteCode:code});
+      addAudit('Account created',(username||email)+' self-registered with an invitation code');
+      enterApp(getSession());
+      showToast('Account created \u2014 you are now signed in','success');
+    }catch(err){
+      $('#regBanner').textContent=(err&&err.message)?err.message:'Could not create the account. Check your invitation code and try again.';
+      $('#regBanner').hidden=false;
     }
-    if(AUTH_USERS.some(x=>(x.username||'').toLowerCase()===username.toLowerCase())){
-      $('#regBanner').textContent='That username is already taken. Choose another, or sign in instead.';$('#regBanner').hidden=false;return;
-    }
-    if(email&&AUTH_USERS.some(x=>(x.email||'').toLowerCase()===email.toLowerCase())){
-      $('#regBanner').textContent='An account with this email already exists. Sign in instead.';$('#regBanner').hidden=false;return;
-    }
-    const grantedRole=codeRec.role;
-    const user=await mkUser(name,email,username,grantedRole,pw);
-    consumeSignupCode(code);
-    AUTH_USERS.push(user);
-    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    addAudit('Account created',username+' self-registered with an Administrator invitation code ('+grantedRole+')');
-    setSession({name:user.name,email:user.email,username:user.username,role:user.role,at:Date.now()},true);
-    enterApp(getSession());
-    showToast('Account created — you are now signed in','success');
   });
-  $('#fgForm').addEventListener('submit',e=>{
+  $('#fgForm').addEventListener('submit',async e=>{
     e.preventDefault();
     const email=$('#fgEmail').value.trim();
     $('#fgEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';
     if(!EMAIL_RE.test(email))return;
-    $('#fgSuccess').textContent='If an account exists for '+email+', a password reset link has been sent. (In this deployment, ask your Administrator to reset your password from Account Administration.)';
+    try{ await sb.auth.resetPasswordForEmail(email); }catch(err){ /* fall through to the same neutral message either way, so this can't be used to enumerate accounts */ }
+    $('#fgSuccess').textContent='If an account exists for '+email+', a password reset link has been sent to that address.';
     $('#fgSuccess').hidden=false;
-  });
-  $('#actPass').addEventListener('input',()=>{
-    const pw=$('#actPass').value,sc=strengthScore(pw);
-    const bar=$('#actStrengthBar'),txt=$('#actStrengthTxt');
-    const pct=[0,20,40,60,80,100][sc]||0;
-    const col=sc<=1?'#ef4444':sc<=2?'#f59e0b':sc<=3?'#eab308':'#22c55e';
-    bar.style.width=pct+'%';bar.style.background=col;
-    txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
-    txt.style.color=col;
-  });
-  $('#actForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const email=$('#actUser').value.trim(),code=$('#actCode').value.trim().toUpperCase(),pw=$('#actPass').value,pw2=$('#actPass2').value;
-    let ok=true;
-    $('#actUserErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
-    $('#actCodeErr').textContent=code?'':'Invite code is required';if(!code)ok=false;
-    const issues=passwordIssues(pw);
-    $('#actPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
-    $('#actPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
-    if(!ok)return;
-    const lockSecs=checkLockout('activate',email);
-    if(lockSecs){$('#actBanner').textContent='Too many attempts. Try again in '+lockSecs+'s.';$('#actBanner').hidden=false;return;}
-    const user=AUTH_USERS.find(x=>(x.email||'').toLowerCase()===email.toLowerCase());
-    if(!user||user.activated!==false){recordFailure('activate',email);$('#actBanner').textContent='No pending invite was found for that email address.';$('#actBanner').hidden=false;return;}
-    if(!user.inviteCode||user.inviteCode.toUpperCase()!==code){recordFailure('activate',email);$('#actBanner').textContent='That invite code is not valid for this account.';$('#actBanner').hidden=false;return;}
-    if(user.inviteExpires&&user.inviteExpires<Date.now()){$('#actBanner').textContent='This invite code has expired. Ask your Administrator to generate a new one.';$('#actBanner').hidden=false;return;}
-    clearFailures('activate',email);
-    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';user.activated=true;user.forceReset=false;user.inviteCode=null;user.inviteExpires=null;
-    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    addAudit('Account activated',user.email+' activated their account via invite code ('+user.role+')');
-    setSession({name:user.name,email:user.email,username:user.username,role:user.role,at:Date.now()},true);
-    enterApp(getSession());
-    showToast('Account activated — you are now signed in','success');
-  });
-  $('#frPass').addEventListener('input',()=>{
-    const pw=$('#frPass').value,sc=strengthScore(pw);
-    const bar=$('#frStrengthBar'),txt=$('#frStrengthTxt');
-    const pct=[0,20,40,60,80,100][sc]||0;
-    const col=sc<=1?'#ef4444':sc<=2?'#f59e0b':sc<=3?'#eab308':'#22c55e';
-    bar.style.width=pct+'%';bar.style.background=col;
-    txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
-    txt.style.color=col;
-  });
-  $('#frForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const pw=$('#frPass').value,pw2=$('#frPass2').value;
-    let ok=true;
-    const issues=passwordIssues(pw);
-    $('#frPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
-    $('#frPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
-    if(!ok)return;
-    const user=FORCE_RESET_USER;
-    if(!user){showAuthView('login');return;}
-    user.salt=randSalt();user.hash=await hashPassword(pw,user.salt);user.algo='pbkdf2';user.forceReset=false;
-    lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-    addAudit('Password changed',(user.username||user.email)+' completed an administrator-required password reset');
-    FORCE_RESET_USER=null;
-    setSession({name:user.name,email:user.email,username:user.username,role:user.role,at:Date.now()},true);
-    enterApp(getSession());
-    showToast('Password updated — you are now signed in','success');
   });
 }
 
@@ -1565,26 +1293,30 @@ function recalc(ds){
 function recalcAll(){YEARS.forEach(y=>{recalc(state.datasets[y].plan);recalc(state.datasets[y].actual);});}
 
 /* ================= persistence ================= */
-const LS_DATA='dbe_fcy_final_datasets_v7',LS_LOG='dbe_fcy_audit_v7',LS_SET='dbe_fcy_settings_v7',LS_TPL='dbe_pivot_templates_v7';
+// Datasets, settings, audit log, and templates all now live in Supabase (public.datasets,
+// app_settings, audit_log, templates) — see Store in the injected block above. These functions
+// keep their original names/signatures so the rest of the app is unaffected, but now read/write
+// through Store instead of localStorage. Writes are fire-and-forget (matching the old synchronous
+// call-site pattern); every write is independently re-checked server-side by Row Level Security,
+// so a rejected write here can never silently "succeed" from the writer's point of view — Supabase
+// returns an error, which is logged to the console (see Store.persistYear/saveSettings/etc).
 function rawOf(ds){const o={opening0:ds.opening0};RAW_KEYS.forEach(k=>o[k]=ds[k]);return o;}
-function persist(){const out={};YEARS.forEach(y=>{out[y]={plan:rawOf(state.datasets[y].plan),actual:rawOf(state.datasets[y].actual)};});lsSet(LS_DATA,JSON.stringify(out));lsSet(LS_SET,JSON.stringify({settings:state.settings,users:state.users,year:state.year,approvals:state.approvals}));}
-function saveLog(){lsSet(LS_LOG,JSON.stringify(state.audit.slice(0,200)));}
-function saveTemplates(){lsSet(LS_TPL,JSON.stringify(state.templates));}
-function loadData(){
-  try{
-    const raw=JSON.parse(lsGet(LS_DATA));
-    if(raw){YEARS.forEach(y=>{if(!raw[y])return;['plan','actual'].forEach(dk=>{const src=raw[y][dk];if(!src)return;if(typeof src.opening0==='number')state.datasets[y][dk].opening0=src.opening0;RAW_KEYS.forEach(k=>{if(Array.isArray(src[k])&&src[k].length===12&&src[k].every(x=>typeof x==='number'))state.datasets[y][dk][k]=src[k].slice();});});});}
-    const set=JSON.parse(lsGet(LS_SET));
-    if(set){if(set.settings)state.settings=Object.assign(state.settings,set.settings);if(Array.isArray(set.users)&&set.users.length)state.users=set.users;if(set.year&&YEARS.includes(set.year))state.year=set.year;if(set.approvals&&typeof set.approvals==='object')state.approvals=set.approvals;}
-    const log=JSON.parse(lsGet(LS_LOG));if(Array.isArray(log))state.audit=log;
-    const tpl=JSON.parse(lsGet(LS_TPL));if(Array.isArray(tpl))state.templates=tpl;
-  }catch(e){}
+function persist(){YEARS.forEach(y=>{Store.persistYear(y,state,rawOf);});Store.saveSettings(state);}
+function saveLog(){/* no-op: each audit entry is written individually by Store.addAudit as it happens */}
+function saveTemplates(){/* no-op: template writes go through Store.saveTemplate/deleteTemplate directly */}
+async function loadData(){
+  await Store.loadAll(YEARS,state,rawOf);
   recalcAll();
 }
 function countModified(y,dk){let n=0;EDITABLE.forEach(k=>{for(let m=0;m<12;m++){if(Math.abs(state.datasets[y][dk][k][m]-ORIGINAL[y][dk][k][m])>TOL)n++;}});return n;}
 function totalModified(){return YEARS.reduce((a,y)=>a+countModified(y,'plan')+countModified(y,'actual'),0);}
 function refreshStatusChip(){const tot=totalModified();$('#dataChipTxt').textContent=tot?(tot+' cell'+(tot>1?'s':'')+' modified'):'Baseline data';$('#dataDot').className='dot'+(tot?' warn':'');}
-function addAudit(action,detail){const s=getSession();state.audit.unshift({t:new Date().toLocaleString('en-GB'),user:s?(s.username||s.email||s.name):'system',action,detail});if(state.audit.length>250)state.audit.length=250;saveLog();}
+function addAudit(action,detail){
+  const s=getSession();
+  state.audit.unshift({t:new Date().toLocaleString('en-GB'),user:s?(s.username||s.email||s.name):'system',action,detail});
+  if(state.audit.length>250)state.audit.length=250;
+  Store.addAudit(action,detail);
+}
 function showToast(msg,type){type=type||'success';const t=document.createElement('div');t.className='toast '+type;t.innerHTML='<span>'+(type==='success'?'✅':type==='warn'?'⚠️':'')+'</span><span>'+msg+'</span>';$('#toasts').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),420);},3200);}
 function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);}
 
@@ -2466,11 +2198,11 @@ async function exportMultiplePDF(kind,year,items){
   }
 }
 
-function saveTemplate(){if(!requireCan('manage_templates','Manage Templates'))return;const name=$('#tplName').value.trim();if(!name){showToast('Enter a template name','error');return;}const c=state.pivot;state.templates.push({id:Date.now(),name:name,cfg:clone({rows:c.rows,cols:c.cols,agg:c.agg,comparison:c.comparison,focusYear:c.focusYear,filters:c.filters,search:c.search})});saveTemplates();renderTemplates();$('#tplName').value='';addAudit('Pivot template saved',name);showToast('Template saved','success');}
+async function saveTemplate(){if(!requireCan('manage_templates','Manage Templates'))return;const name=$('#tplName').value.trim();if(!name){showToast('Enter a template name','error');return;}const c=state.pivot;const cfg=clone({rows:c.rows,cols:c.cols,agg:c.agg,comparison:c.comparison,focusYear:c.focusYear,filters:c.filters,search:c.search});const saved=await Store.saveTemplate(name,cfg);if(!saved){showToast('Failed to save template','error');return;}state.templates.unshift(saved);renderTemplates();$('#tplName').value='';addAudit('Pivot template saved',name);showToast('Template saved','success');}
 function applyTplCfg(cfg){const c=state.pivot;c.rows=Array.isArray(cfg.rows)?cfg.rows:['category','line'];c.cols=Array.isArray(cfg.cols)?cfg.cols:['type'];c.agg=cfg.agg||'sum';c.comparison=cfg.comparison||'none';c.focusYear=cfg.focusYear||'2025/26';c.filters=Object.assign({year:'all',type:'all',category:'all',line:'all',quarter:'all',month:'all'},cfg.filters||{});c.search=cfg.search||'';c.collapsed=[];c.sort={by:null,dir:1};syncPivotControls();renderPivotOutput();}
 function loadTemplate(id){const t=state.templates.find(x=>x.id===id);if(!t)return;applyTplCfg(t.cfg);showToast('Template loaded','success');}
-function renameTemplate(id){if(!requireCan('manage_templates','Manage Templates'))return;const t=state.templates.find(x=>x.id===id);if(!t)return;const n=prompt('Rename template:',t.name);if(!n)return;t.name=n.trim();saveTemplates();renderTemplates();showToast('Renamed','success');}
-function deleteTemplate(id){if(!requireCan('manage_templates','Manage Templates'))return;const t=state.templates.find(x=>x.id===id);if(!t)return;if(!confirm('Delete “'+t.name+'”?'))return;state.templates=state.templates.filter(x=>x.id!==id);saveTemplates();renderTemplates();showToast('Deleted','warn');}
+async function renameTemplate(id){if(!requireCan('manage_templates','Manage Templates'))return;const t=state.templates.find(x=>x.id===id);if(!t)return;const n=prompt('Rename template:',t.name);if(!n)return;t.name=n.trim();await Store.renameTemplate(id,t.name);renderTemplates();showToast('Renamed','success');}
+async function deleteTemplate(id){if(!requireCan('manage_templates','Manage Templates'))return;const t=state.templates.find(x=>x.id===id);if(!t)return;if(!confirm('Delete “'+t.name+'”?'))return;await Store.deleteTemplate(id);state.templates=state.templates.filter(x=>x.id!==id);renderTemplates();showToast('Deleted','warn');}
 function shareTemplate(id){const t=state.templates.find(x=>x.id===id);if(!t)return;const json=JSON.stringify({shared:'DBE FCY Pivot Template',name:t.name,cfg:t.cfg},null,2);const done=()=>showToast('Template JSON copied','success');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(json).then(done).catch(()=>fallbackCopy(json,done));else fallbackCopy(json,done);}
 function fallbackCopy(txt,cb){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');cb();}catch(e){showToast('Copy failed','error');}ta.remove();}
 function renderTemplates(){const el=$('#tplList');if(!el)return;if(!state.templates.length){el.innerHTML='<p class="muted" style="font-size:13px">No saved templates yet.</p>';return;}el.innerHTML=state.templates.map(t=>{const cfg=t.cfg;return '<div class="tpl-row"><div class="avatar" style="background:linear-gradient(135deg,#f5c518,#d97706);color:#3a2a04">📊</div><div style="flex:1;min-width:180px"><b style="font-size:13px">'+escHtml(t.name)+'</b><div class="muted" style="font-size:11.5px">Rows: '+escHtml(cfg.rows.map(d=>PIVOT_DIMS[d].label).join(', '))+' • '+escHtml(cap(cfg.agg))+' • '+escHtml(cap(cfg.comparison))+'</div></div><button class="btn btn-primary btn-xs" onclick="loadTemplate('+t.id+')">▶ Open</button><button class="btn btn-ghost btn-xs" onclick="renameTemplate('+t.id+')">✎ Rename</button><button class="btn btn-ghost btn-xs" onclick="shareTemplate('+t.id+')">🔗 Share</button><button class="btn btn-danger btn-xs" onclick="deleteTemplate('+t.id+')">🗑</button></div>';}).join('');}
@@ -2679,17 +2411,19 @@ const FAQ=[
 function buildFaq(){$('#faqWrap').innerHTML=FAQ.map(f=>'<div class="acc-item"><button class="acc-btn" onclick="toggleAcc(this)"><span>'+f[0]+'</span><svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></button><div class="acc-body"><p style="padding-top:4px">'+f[1]+'</p></div></div>').join('');}
 function toggleAcc(btn){btn.parentElement.classList.toggle('open');}
 function adminTabAllowed(){
-  const sess=getSession();if(!sess)return false;
-  if(sess.role==='Administrator')return true;
+  // No role shortcut here on purpose \u2014 a forged "Administrator" value on a client object can
+  // no longer grant anything. The only thing that matters is which privileges Supabase actually
+  // returned for this signed-in user, and every one of the tables these actions touch enforces
+  // the same check again server-side via Row Level Security.
   return can('system_admin')||can('manage_users')||can('manage_invite_codes')||can('manage_templates')||can('view_audit_logs');
 }
-function renderAdmin(){
+let PROFILES=[];
+async function renderAdmin(){
   const sess=getSession();
-  if(adminTabAllowed())state.adminLoggedIn=true;
-  $('#adminLogin').style.display=state.adminLoggedIn?'none':'block';
+  state.adminLoggedIn=adminTabAllowed();
   $('#adminPanel').hidden=!state.adminLoggedIn;
   if(!state.adminLoggedIn)return;
-  $('#admNow').textContent='Session: '+(sess?(sess.username||sess.email):'local')+' \u2022 '+(sess?sess.role:'')+' \u2022 '+new Date().toLocaleString('en-GB');
+  $('#admNow').textContent='Session: '+(sess?(sess.username||sess.email):'')+' \u2022 '+(sess?sess.role:'')+' \u2022 '+new Date().toLocaleString('en-GB');
   const seeData=can('system_admin'),seeUsers=can('manage_users'),seeCodes=can('manage_invite_codes'),seeAudit=can('view_audit_logs');
   $('#admDataCard').hidden=!seeData;
   $('#admSettingsCard').hidden=!seeData;
@@ -2700,8 +2434,8 @@ function renderAdmin(){
     $('#setLock').checked=state.settings.planLocked;
     $('#dmStats').innerHTML=YEARS.map(y=>'FY '+y+': plan <b>'+countModified(y,'plan')+'</b>, actual <b>'+countModified(y,'actual')+'</b> modified').join('<br>');
   }
-  if(seeCodes)renderInviteCodes();
-  if(seeUsers)renderUserList();
+  if(seeCodes){await refreshSignupCodes();renderInviteCodes();}
+  if(seeUsers){PROFILES=await Store.loadProfiles();renderUserList();}
   if(seeAudit)$('#auditBody').innerHTML=state.audit.length?state.audit.slice(0,80).map(l=>'<tr><td class="muted">'+escHtml(l.t)+'</td><td><b>'+escHtml(l.user)+'</b></td><td>'+escHtml(l.action)+'</td><td class="muted">'+escHtml(l.detail)+'</td></tr>').join(''):'<tr><td colspan="4" class="muted" style="text-align:center;padding:20px">No activity yet.</td></tr>';
 }
 function renderInviteCodes(){
@@ -2709,72 +2443,74 @@ function renderInviteCodes(){
   const statusPill={valid:'<span class="pill" style="background:#e7f6ee;color:#0a5236">Active</span>',expired:'<span class="pill warn">Expired</span>',revoked:'<span class="pill" style="background:#fdeaea;color:#c02626">Revoked</span>',exhausted:'<span class="pill warn">Uses exhausted</span>'};
   $('#invCodeList').innerHTML=SIGNUP_CODES.map(c=>{
     const st=signupCodeStatus(c);
-    const uses=(c.maxUses!=null)?(c.usedCount+' / '+c.maxUses):(c.usedCount+' / \u221e');
-    const exp=c.expiresAt?new Date(c.expiresAt).toLocaleDateString('en-GB'):'No expiry';
+    const uses=(c.max_uses!=null)?(c.used_count+' / '+c.max_uses):(c.used_count+' / \u221e');
+    const exp=c.expires_at?new Date(c.expires_at).toLocaleDateString('en-GB'):'No expiry';
     return '<div class="user-row" style="flex-wrap:wrap"><div style="flex:1;min-width:150px"><b style="font-size:14px;letter-spacing:.06em">'+escHtml(c.code)+'</b><div class="muted" style="font-size:11.5px">Role: '+escHtml(c.role)+' \u2022 Uses: '+uses+' \u2022 Expires: '+exp+(c.note?' \u2022 '+escHtml(c.note):'')+'</div></div>'+statusPill[st]+(st==='valid'?'<button class="btn btn-danger btn-sm" onclick="uiRevokeSignupCode('+c.id+')">Revoke</button>':'')+'</div>';
   }).join('');
 }
-function uiGenerateSignupCode(){
+async function uiGenerateSignupCode(){
   if(!requireCan('manage_invite_codes','Manage Invitation Codes'))return;
   const role=$('#icRole').value;
   const days=parseInt($('#icExpiry').value,10);
   const maxUses=parseInt($('#icMaxUses').value,10);
   const note=$('#icNote').value.trim();
   const expiresAt=(isFinite(days)&&days>0)?(Date.now()+days*24*60*60*1000):null;
-  const c=createSignupCode(role,expiresAt,isFinite(maxUses)&&maxUses>0?maxUses:null,note);
-  $('#icExpiry').value='';$('#icMaxUses').value='';$('#icNote').value='';
-  renderInviteCodes();
-  showToast('Invitation code generated: '+c.code,'success');
+  try{
+    const code=await createSignupCode(role,expiresAt,isFinite(maxUses)&&maxUses>0?maxUses:null,note);
+    $('#icExpiry').value='';$('#icMaxUses').value='';$('#icNote').value='';
+    renderInviteCodes();
+    showToast('Invitation code generated: '+code,'success');
+  }catch(err){ showToast('Could not generate code: '+((err&&err.message)||'unknown error'),'error'); }
 }
-function uiRevokeSignupCode(id){
+async function uiRevokeSignupCode(id){
   if(!requireCan('manage_invite_codes','Manage Invitation Codes'))return;
   if(!confirm('Revoke this invitation code? It will stop working immediately.'))return;
-  revokeSignupCode(id);renderInviteCodes();showToast('Invitation code revoked','warn');
+  await revokeSignupCode(id);renderInviteCodes();showToast('Invitation code revoked','warn');
 }
 function renderUserList(){
   const sess=getSession();
-  let html=AUTH_USERS.map((u,i)=>{
-    const cls=u.role==='Administrator'?'adm':u.role==='Manager'?'mgr':(u.role==='Data Encoder'||u.role==='Encoder'||u.role==='Editor')?'enc':u.role==='Auditor'?'aud':'vwr';
+  let html=PROFILES.map((u,i)=>{
+    const cls=u.role==='Administrator'?'adm':u.role==='Manager'?'mgr':u.role==='Data Encoder'?'enc':u.role==='Auditor'?'aud':'vwr';
     let status='';
-    if(u.activated===false){status=(u.inviteExpires&&u.inviteExpires<Date.now())?'<span class="pill warn">Invite expired</span>':'<span class="pill warn">Invite pending</span>';}
-    else if(u.forceReset){status='<span class="pill warn">Reset pending</span>';}
     if(u.active===false)status+='<span class="pill" style="background:#fdeaea;color:#c02626">Deactivated</span>';
-    const isSelf=sess&&((sess.username&&sess.username.toLowerCase()===(u.username||'').toLowerCase())||(sess.email&&sess.email.toLowerCase()===(u.email||'').toLowerCase()));
+    const isSelf=sess&&sess.id===u.id;
     const roleOpts=ROLES.map(r=>'<option'+(r===u.role?' selected':'')+'>'+r+'</option>').join('');
-    const roleSel=(u.locked||!can('manage_users'))?('<span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'):('<select class="sel sel-sm" data-act="chrole" data-idx="'+i+'">'+roleOpts+'</select>');
-    const actions=(u.activated===false)
-      ? '<button class="btn btn-ghost btn-sm" data-act="resend" data-idx="'+i+'">\u21bb New Invite Code</button>'
-      : '<button class="btn btn-ghost btn-sm" data-act="reset" data-idx="'+i+'">\ud83d\udd11 Reset Password</button>';
+    const roleSel=(!can('manage_users'))?('<span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'):('<select class="sel sel-sm" data-act="chrole" data-idx="'+i+'">'+roleOpts+'</select>');
+    const resetBtn='<button class="btn btn-ghost btn-sm" data-act="reset" data-idx="'+i+'">\ud83d\udd11 Send Password Reset</button>';
     const privBtn='<button class="btn btn-ghost btn-sm" data-act="privs" data-idx="'+i+'">\ud83d\udd27 Privileges</button>';
-    const toggleBtn=(u.locked||isSelf)?'':('<button class="btn btn-ghost btn-sm" data-act="toggleactive" data-idx="'+i+'">'+(u.active===false?'\u2713 Activate':'\u26d4 Deactivate')+'</button>');
-    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+escHtml(u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+escHtml(u.username||u.email||'')+(u.email&&u.username?' \u2022 '+escHtml(u.email):'')+'</div></div>'+roleSel+status+privBtn+actions+toggleBtn+'</div>';
+    const toggleBtn=isSelf?'':('<button class="btn btn-ghost btn-sm" data-act="toggleactive" data-idx="'+i+'">'+(u.active===false?'\u2713 Activate':'\u26d4 Deactivate')+'</button>');
+    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+escHtml((u.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+escHtml(u.username||'')+'</div></div>'+roleSel+status+privBtn+resetBtn+toggleBtn+'</div>';
   }).join('');
   $('#userList').innerHTML=html;
 }
-function uiChangeRole(idx,newRole){
+async function uiChangeRole(idx,newRole){
   if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];if(!u||u.locked)return;
+  const u=PROFILES[idx];if(!u)return;
   const oldRole=u.role;
   if(oldRole===newRole)return;
-  u.role=newRole;
-  u.privileges=defaultPrivsForRole(newRole);
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  addAudit('Role changed',(u.username||u.email)+': '+oldRole+' \u2192 '+newRole+' (privileges reset to role defaults)');
-  renderAdmin();
-  showToast('Role updated to '+newRole,'success');
+  try{
+    await Store.updateProfile(u.id,{role:newRole,privileges:defaultPrivsForRole(newRole)});
+    u.role=newRole;u.privileges=defaultPrivsForRole(newRole);
+    addAudit('Role changed',(u.username||u.name)+': '+oldRole+' \u2192 '+newRole+' (privileges reset to role defaults)');
+    renderAdmin();
+    showToast('Role updated to '+newRole,'success');
+  }catch(err){ showToast('Could not change role: '+((err&&err.message)||'the last Administrator account cannot be changed'),'error'); renderAdmin(); }
 }
-function uiToggleActive(idx){
+async function uiToggleActive(idx){
   if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];if(!u||u.locked)return;
-  u.active=(u.active===false)?true:false;
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  addAudit(u.active?'Account activated':'Account deactivated',u.username||u.email);
-  renderAdmin();
-  showToast(u.active?'Account activated':'Account deactivated \u2014 they can no longer sign in','warn');
+  const u=PROFILES[idx];if(!u)return;
+  const next=(u.active===false)?true:false;
+  try{
+    await Store.updateProfile(u.id,{active:next});
+    u.active=next;
+    addAudit(next?'Account activated':'Account deactivated',u.username||u.name);
+    renderAdmin();
+    showToast(next?'Account activated':'Account deactivated \u2014 they can no longer access any data','warn');
+  }catch(err){ showToast('Could not update account: '+((err&&err.message)||'the last Administrator account cannot be deactivated'),'error'); renderAdmin(); }
 }
 function showPrivilegesModal(idx){
   if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];if(!u)return;
+  const u=PROFILES[idx];if(!u)return;
   const current=privsOf(u);
   $('#modalTitle').textContent='Privileges \u2014 '+u.name+' ('+u.role+')';
   $('#modalBody').innerHTML='<div style="padding:6px 2px;font-size:13px">'
@@ -2788,39 +2524,27 @@ function showPrivilegesModal(idx){
     +'</div></div>';
   $('#modal').hidden=false;
 }
-function savePrivileges(idx){
+async function savePrivileges(idx){
   if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];if(!u)return;
+  const u=PROFILES[idx];if(!u)return;
   if(!confirm('Apply this privilege change to '+u.name+'?'))return;
   const picked=$$('#privGrid .priv-cb:checked').map(c=>c.value);
   const before=privsOf(u).slice().sort().join(',');
   const after=picked.slice().sort().join(',');
-  u.privileges=picked;
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  if(before!==after)addAudit('Privileges changed',(u.username||u.email)+' \u2192 ['+picked.join(', ')+']');
-  closeModal();renderAdmin();
-  showToast('Privileges updated','success');
+  try{
+    await Store.updateProfile(u.id,{privileges:picked});
+    u.privileges=picked;
+    if(before!==after)addAudit('Privileges changed',(u.username||u.name)+' \u2192 ['+picked.join(', ')+']');
+    closeModal();renderAdmin();
+    showToast('Privileges updated','success');
+  }catch(err){ showToast('Could not update privileges: '+((err&&err.message)||'unknown error'),'error'); }
 }
-async function adminLogin(){
-  const sess=getSession();
-  if(sess&&sess.role==='Administrator'){state.adminLoggedIn=true;renderAdmin();showToast('Administrator session detected','success');return;}
-  const u=$('#admUser').value.trim(),p=$('#admPass').value;
-  const lockSecs=checkLockout('adminlogin',u);
-  if(lockSecs){showToast('Too many failed attempts. Try again in '+lockSecs+'s.','error');return;}
-  const acct=AUTH_USERS.find(x=>x.role==='Administrator'&&((x.email||'').toLowerCase()===u.toLowerCase()||(x.username||'').toLowerCase()===u.toLowerCase()));
-  const ok=acct&&acct.activated!==false&&await verifyAndMaybeUpgrade(acct,p);
-  if(ok){clearFailures('adminlogin',u);state.adminLoggedIn=true;addAudit('Admin login',acct?acct.email:u);renderAdmin();showToast('Administrator signed in','success');return;}
-  recordFailure('adminlogin',u);
-  showToast('Invalid credentials','error');
-}
-function adminLogout(){state.adminLoggedIn=false;renderAdmin();showToast('Admin logged out','warn');}
 document.addEventListener('click',e=>{
   const btn=e.target.closest('[data-act]');
   if(!btn)return;
   const idx=btn.dataset.idx!=null?parseInt(btn.dataset.idx,10):null;
   const act=btn.dataset.act;
-  if(act==='resend')adminResendInvite(idx);
-  else if(act==='reset')adminResetPassword(idx);
+  if(act==='reset')adminResetPassword(idx);
   else if(act==='privs')showPrivilegesModal(idx);
   else if(act==='toggleactive')uiToggleActive(idx);
 });
@@ -2830,64 +2554,27 @@ document.addEventListener('change',e=>{
   const idx=parseInt(sel.dataset.idx,10);
   uiChangeRole(idx,sel.value);
 });
-function addUser(){
-  if(!requireCan('manage_users','Manage Users'))return;
-  const n=$('#newUserName').value.trim(),em=$('#newUserEmail').value.trim(),rr=$('#newUserRole').value;
-  if(!n){showToast('Enter a name','error');return;}
-  if(!EMAIL_RE.test(em)){showToast('Enter a valid email address','error');return;}
-  if(AUTH_USERS.some(x=>(x.email||'').toLowerCase()===em.toLowerCase())){showToast('An account with this email already exists','error');return;}
-  const code=genInviteCode();
-  const user={id:Date.now()+Math.floor(Math.random()*1e5),name:n,email:em,username:em.split('@')[0],role:rr,privileges:defaultPrivsForRole(rr),active:true,salt:null,hash:null,activated:false,forceReset:false,inviteCode:code,inviteExpires:Date.now()+INVITE_TTL_MS};
-  AUTH_USERS.push(user);
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  $('#newUserName').value='';$('#newUserEmail').value='';
-  addAudit('User created',em+' added as '+rr+' • invite code issued');
-  renderAdmin();
-  showInviteModal(user,code);
-  showToast('User added — invite code generated','success');
-}
-function adminResendInvite(idx){
-  if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];
-  if(!u)return;
-  u.inviteCode=genInviteCode();u.inviteExpires=Date.now()+INVITE_TTL_MS;u.activated=false;
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  addAudit('Invite code reissued',(u.email||u.username)+' — new invite code generated');
-  renderAdmin();
-  showInviteModal(u,u.inviteCode);
-  showToast('New invite code generated','success');
-}
+// Admins no longer create accounts or set passwords directly — a static site with only the
+// anon key has no way to do that securely (it would need a service-role key exposed in the
+// browser, which defeats Row Level Security entirely). Instead: an admin issues a role-scoped
+// invitation code above, and the new user creates their own account with it via the normal
+// sign-up form — the same self-service flow every user goes through.
 async function adminResetPassword(idx){
   if(!requireCan('manage_users','Manage Users'))return;
-  const u=AUTH_USERS[idx];
+  const u=PROFILES[idx];
   if(!u){showToast('User not found','error');return;}
-  if(!confirm('Reset the password for '+(u.email||u.username)+' ('+u.role+')? A new temporary password will be generated and this action will be recorded in the audit trail.'))return;
-  const temp=genTempPassword();
-  u.salt=randSalt();u.hash=await hashPassword(temp,u.salt);u.algo='pbkdf2';u.activated=true;u.forceReset=true;u.inviteCode=null;u.inviteExpires=null;
-  lsSet(LS_USERS,JSON.stringify(AUTH_USERS));
-  const sess=getSession();
-  addAudit('Password reset',(sess?(sess.username||sess.email):'Administrator')+' reset the password for '+(u.email||u.username)+' ('+u.role+')');
-  renderAdmin();
-  showResetModal(u,temp);
-  showToast('Password reset — temporary password generated','success');
-}
-function showInviteModal(user,code){
-  const exp=new Date(user.inviteExpires).toLocaleString('en-GB');
-  $('#modalTitle').textContent='Invite Code — '+user.name;
-  $('#modalBody').innerHTML='<div style="padding:6px 2px;font-size:13px;line-height:1.7">'
-    +'<p>A login account for <b>'+escHtml(user.email||user.username)+'</b> ('+escHtml(user.role)+') has been created and is <b>pending activation</b>.</p>'
-    +'<p style="margin-top:10px">Share this one-time invite code with the user through a secure channel. On the sign-in page they should choose “Have an invite code?” to activate their account and set their own password.</p>'
-    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:22px;font-weight:800;letter-spacing:.08em">'+escHtml(code)+'</div>'
-    +'<p class="muted" style="font-size:12px">Expires '+exp+'. The code becomes invalid immediately after it is used.</p></div>';
-  $('#modal').hidden=false;
-}
-function showResetModal(user,temp){
-  $('#modalTitle').textContent='Password Reset — '+user.name;
-  $('#modalBody').innerHTML='<div style="padding:6px 2px;font-size:13px;line-height:1.7">'
-    +'<p>The password for <b>'+escHtml(user.email||user.username)+'</b> ('+escHtml(user.role)+') has been reset.</p>'
-    +'<p style="margin-top:10px">Share this temporary password with the user through a secure channel. They will be required to set a new password immediately after signing in with it.</p>'
-    +'<div style="margin:14px 0;padding:14px;background:#f6f9f7;border:1px solid var(--line);border-radius:10px;text-align:center;font-size:20px;font-weight:800;letter-spacing:.04em">'+escHtml(temp)+'</div></div>';
-  $('#modal').hidden=false;
+  if(!u.username&&!u.email){showToast('No email on file for this user','error');return;}
+  if(!confirm('Send a password reset email to '+(u.name)+'?'))return;
+  try{
+    // We only have the profile's username/email cached client-side for display; Supabase needs
+    // the account's actual auth email, which the admin enters here since we deliberately don't
+    // expose a table of every user's email to the browser beyond what RLS already allows.
+    const email=prompt('Confirm the email address for '+u.name+':', u.email||'');
+    if(!email)return;
+    await sb.auth.resetPasswordForEmail(email);
+    addAudit('Password reset requested','Administrator sent a password reset email to '+(u.username||email));
+    showToast('Password reset email sent','success');
+  }catch(err){ showToast('Could not send reset email: '+((err&&err.message)||'unknown error'),'error'); }
 }
 function saveSettings(){
   if(!requireCan('system_admin','System Administration'))return;
@@ -2911,8 +2598,8 @@ function downloadImportTemplate(){
 }
 function exportJSON(){if(!requireCan('system_admin','System Administration'))return;const out={};YEARS.forEach(y=>{out[y]={plan:rawOf(state.datasets[y].plan),actual:rawOf(state.datasets[y].actual)};});downloadBlob(new Blob([JSON.stringify({app:'DBE FCY Reporting Suite',exportedAt:new Date().toISOString(),datasets:out},null,2)],{type:'application/json'}),'DBE_FCY_Backup_'+new Date().toISOString().slice(0,10)+'.json');addAudit('Backup export','JSON');showToast('Backup downloaded','success');}
 function importJSON(file){if(!requireCan('import_data','Import Data')||!requireCan('system_admin','System Administration'))return;const rd=new FileReader();rd.onload=ev=>{try{const j=JSON.parse(ev.target.result);if(!j.datasets)throw new Error('bad');YEARS.forEach(y=>{if(!j.datasets[y])return;['plan','actual'].forEach(dk=>{const src=j.datasets[y][dk];if(!src)return;if(typeof src.opening0==='number')state.datasets[y][dk].opening0=src.opening0;RAW_KEYS.forEach(k=>{state.datasets[y][dk][k]=(Array.isArray(src[k])&&src[k].length===12&&src[k].every(x=>typeof x==='number'))?src[k].slice():z();});recalc(state.datasets[y][dk]);});});persist();refreshStatusChip();addAudit('Backup import','JSON');showToast('Backup imported','success');}catch(err){showToast('Import failed','error');}};rd.readAsText(file);}
-function resetAllData(){if(!requireCan('system_admin','System Administration'))return;if(!confirm('Reset ALL fiscal years to original figures?'))return;state.datasets=clone(ORIGINAL);recalcAll();lsDel(LS_DATA);refreshStatusChip();addAudit('Full reset','baseline');showToast('All data restored','warn');}
-function clearAudit(){if(!confirm('Clear audit log?'))return;state.audit=[];saveLog();renderAdmin();showToast('Audit cleared','warn');}
+function resetAllData(){if(!requireCan('system_admin','System Administration'))return;if(!confirm('Reset ALL fiscal years to original figures? This overwrites the shared data in Supabase for every user.'))return;state.datasets=clone(ORIGINAL);recalcAll();persist();refreshStatusChip();addAudit('Full reset','baseline');showToast('All data restored','warn');}
+async function refreshAuditLog(){await Store.loadAudit(state);renderAdmin();showToast('Audit log refreshed','success');}
 
 /* ================= APP BOOT ================= */
 function setupApp(){
@@ -2927,7 +2614,6 @@ function setupApp(){
   $('#diWrap').addEventListener('change',onCellEdit);
   $('#diWrap').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('cell'))e.target.blur();});
   $('#importFile').addEventListener('change',e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value='';});
-  $('#admPass').addEventListener('keydown',e=>{if(e.key==='Enter')adminLogin();});
   $('#monYear').addEventListener('change',e=>{syncYear(e.target.value);safeRender(renderMonthly);});
   $('#monMonth').addEventListener('change',e=>{state.monMonth=+e.target.value;safeRender(renderMonthly);});
   $('#monUnit').addEventListener('change',e=>{state.monUnit=e.target.value;safeRender(renderMonthly);});
@@ -2980,8 +2666,6 @@ function restoreReportTablesAfterPrint(){
   });
 }
 async function init(){
-  loadData();
-  await seedUsers();
   setupAuth();
   applyLogo();
   window.addEventListener('beforeprint',()=>{
@@ -2990,10 +2674,29 @@ async function init(){
     fitReportTablesForPrint();
   });
   window.addEventListener('afterprint',restoreReportTablesAfterPrint);
-  const s=getSession();
-  if(s){enterApp(s);}
-  else if(AUTH_USERS.length===0){showAuthView('setup');}
-  else{showAuthView('login');}
+  // Nothing is fetched from Supabase until a real, signed session is confirmed — every table is
+  // behind Row Level Security that requires one, so there is nothing useful to load before this.
+  const profile=await Auth.restoreSession();
+  if(profile&&profile.active===false){
+    await Auth.signOut();
+    $('#loginBanner').textContent='This account has been deactivated. Contact your Administrator.';
+    $('#loginBanner').hidden=false;
+    showAuthView('login');
+  }else if(profile){
+    enterApp(getSession());
+  }else{
+    showAuthView('login');
+  }
+  // If the session is revoked or expires elsewhere (another tab signs out, a token refresh
+  // fails, an admin deactivates this account), fall back to the sign-in screen rather than
+  // leaving stale data on screen.
+  Auth.onAuthChange((event,p)=>{
+    if(event==='SIGNED_OUT'||(!p&&appStarted)){
+      document.body.classList.remove('authed');
+      $('#userChip').hidden=true;$('#logoutBtn').hidden=true;
+      showAuthView('login');
+    }
+  });
 }
 init();
 </script>
