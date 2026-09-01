@@ -277,27 +277,6 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
           </div>
           <button class="btn btn-primary btn-block" type="submit">Sign In</button>
         </form>
-        <div class="auth-switch">New here? <button class="alink" id="toRegister">Create an account</button></div>
-      </div>
-      <div id="authRegView" hidden>
-        <div class="auth-title">Create account</div>
-        <div class="auth-sub">Register to access the reporting suite — an Administrator invite code is required</div>
-        <div class="aerr" id="regBanner" hidden></div>
-        <form id="regForm" novalidate>
-          <div class="afield"><label for="rgCode">Administrator invitation code</label><input id="rgCode" type="text" autocomplete="off" placeholder="XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.06em"><span class="ferr" id="rgCodeErr"></span></div>
-          <div class="afield"><label for="rgName">Full name</label><input id="rgName" type="text" autocomplete="name" placeholder="e.g. Sara Mekonnen"><span class="ferr" id="rgNameErr"></span></div>
-          <div class="afield"><label for="rgUser">Username</label><input id="rgUser" type="text" autocomplete="username" placeholder="e.g. smekonnen"><span class="ferr" id="rgUserErr"></span></div>
-          <div class="afield"><label for="rgEmail">Email address <span class="muted" style="font-weight:400">(optional)</span></label><input id="rgEmail" type="email" autocomplete="email" placeholder="you@dbe.com.et (optional)"><span class="ferr" id="rgEmailErr"></span></div>
-          <div class="afield"><label for="rgPass">Password</label>
-            <div class="pwrap"><input id="rgPass" type="password" autocomplete="new-password" placeholder="Min 8 chars, Aa + number"><button type="button" class="eye" data-eye="rgPass" aria-label="Show/Hide password">👁</button></div>
-            <div class="strength"><i id="rgStrengthBar"></i></div><span class="stext" id="rgStrengthTxt"></span>
-            <span class="ferr" id="rgPassErr"></span></div>
-          <div class="afield"><label for="rgPass2">Confirm password</label>
-            <div class="pwrap"><input id="rgPass2" type="password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="eye" data-eye="rgPass2" aria-label="Show/Hide password">👁</button></div>
-            <span class="ferr" id="rgPass2Err"></span></div>
-          <button class="btn btn-primary btn-block" type="submit">Create Account</button>
-        </form>
-        <div class="auth-switch">Already have an account? <button class="alink" id="toLogin">Sign in</button></div>
       </div>
       <div id="authForgotView" hidden>
         <div class="auth-title">Reset password</div>
@@ -630,19 +609,20 @@ table.mpd{border-collapse:collapse;width:100%;font-size:14px;min-width:1150px;fo
             </div>
           </div>
           <div class="grid-2">
-            <div class="card" id="admCodesCard"><h3>🎫 Invitation Codes (self sign-up)</h3>
-              <div class="tbl-note" style="margin-bottom:10px">Anyone using <b>Create an account</b> on the sign-in screen must enter a valid, unexpired code with remaining uses. Each code grants a specific role. Revoking a code takes effect immediately.</div>
-              <div id="invCodeList" style="margin-bottom:12px"></div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-                <div style="min-width:130px"><label class="mini-lbl">Role granted</label><select class="sel" id="icRole"><option>Data Encoder</option><option>Auditor</option><option>Manager</option><option>Administrator</option></select></div>
-                <div style="width:110px"><label class="mini-lbl">Expires (days)</label><input class="inp" id="icExpiry" type="number" min="0" placeholder="none"></div>
-                <div style="width:100px"><label class="mini-lbl">Max uses</label><input class="inp" id="icMaxUses" type="number" min="1" placeholder="unlimited"></div>
-                <div style="flex:1;min-width:140px"><label class="mini-lbl">Note (optional)</label><input class="inp" id="icNote" type="text" placeholder="e.g. Q3 finance interns"></div>
-                <button class="btn btn-primary btn-sm" onclick="uiGenerateSignupCode()">+ Generate Code</button>
+            <div class="card" id="admUsersCard"><h3>👥 User Management</h3>
+              <div class="tbl-note" style="margin-bottom:10px">Every account is created here by an Administrator — there is no self sign-up. Set an initial password below (or generate one) and share it with the person directly; they can change it any time from the sign-in screen's <b>Forgot password?</b> link.</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--line)">
+                <div style="flex:1;min-width:140px"><label class="mini-lbl">Full name</label><input class="inp" id="nuName" placeholder="e.g. Sara Mekonnen"></div>
+                <div style="flex:1;min-width:160px"><label class="mini-lbl">Email address</label><input class="inp" id="nuEmail" type="email" placeholder="you@dbe.com.et"></div>
+                <div style="min-width:130px"><label class="mini-lbl">Role</label><select class="sel" id="nuRole"><option>Data Encoder</option><option>Auditor</option><option>Manager</option><option>Administrator</option></select></div>
+                <div style="flex:1;min-width:170px">
+                  <label class="mini-lbl">Initial password</label>
+                  <div class="pwrap"><input class="inp" id="nuPass" type="text" placeholder="Min 8 characters" autocomplete="off"><button type="button" class="eye" id="nuPassGen" title="Generate a strong password">🎲</button></div>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="uiCreateUser()">+ Create Account</button>
               </div>
-            </div>
-            <div class="card" id="admUsersCard"><h3>👥 User Management</h3><div id="userList"></div>
-              <div class="tbl-note" style="margin-top:10px">New users create their own account with an invitation code above (issued by an Administrator) and set their own password — no admin ever sees or sets another user's password. Administrators can send a password-reset email, change role, edit individual privileges, or activate/deactivate an account below — every change is logged to the audit trail.</div>
+              <div id="userList"></div>
+              <div class="tbl-note" style="margin-top:10px">Administrators can set a new password, change role, edit individual privileges, activate/deactivate, or permanently delete an account below — every change is logged to the audit trail.</div>
             </div>
           </div>
           <div class="grid-2">
@@ -735,14 +715,11 @@ const Auth = (() => {
     return _profile;
   }
 
-  async function signUp({ name, email, password, inviteCode }) {
-    const { error } = await sb.auth.signUp({
-      email, password,
-      options: { data: { name, invite_code: inviteCode } }
-    });
-    if (error) throw error;
-    return _loadProfile();
-  }
+  // Deliberately no signUp() here — every account is created by an
+  // Administrator via the admin-create-user Edge Function (see
+  // supabase/functions/), never by the account owner themselves. Public
+  // sign-up is also switched off at the project level (Authentication →
+  // Providers → Email → "Allow new users to sign up") — see MIGRATION.md.
 
   async function signIn({ email, password }) {
     const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -753,12 +730,6 @@ const Auth = (() => {
   async function signOut() {
     await sb.auth.signOut();
     _profile = null; _authUser = null;
-  }
-
-  async function checkInviteCode(code) {
-    const { data, error } = await sb.rpc('check_invite_code', { p_code: code });
-    if (error || !data || !data[0]) return { valid: false, role: null };
-    return { valid: data[0].valid, role: data[0].role };
   }
 
   // ---- privilege helpers (synchronous — read from the cached profile) ----
@@ -790,7 +761,7 @@ const Auth = (() => {
     });
   }
 
-  return { restoreSession, signUp, signIn, signOut, checkInviteCode, currentUser, privsOf, can, requireCan, onAuthChange };
+  return { restoreSession, signIn, signOut, currentUser, privsOf, can, requireCan, onAuthChange };
 })();
 
 /* ================= Store ================= */
@@ -879,26 +850,6 @@ const Store = (() => {
     if (error) console.error('deleteTemplate failed', error);
   }
 
-  // ---- signup / invitation codes ----------------------------------------
-  async function loadSignupCodes() {
-    const { data, error } = await sb.from('signup_codes').select('*').order('created_at', { ascending: false });
-    if (error) { console.error(error); return []; }
-    return data || [];
-  }
-
-  async function createSignupCode({ code, role, expiresAt, maxUses, note }) {
-    const { error } = await sb.from('signup_codes').insert({
-      code, role, expires_at: expiresAt || null, max_uses: (maxUses || maxUses === 0) ? maxUses : null,
-      note: note || '', created_by: Auth.currentUser()?.id
-    });
-    if (error) throw error;
-  }
-
-  async function revokeSignupCode(id) {
-    const { error } = await sb.from('signup_codes').update({ revoked: true }).eq('id', id);
-    if (error) console.error('revokeSignupCode failed', error);
-  }
-
   // ---- user management (admin panel) -----------------------------------
   async function loadProfiles() {
     const { data, error } = await sb.from('profiles').select('*').order('created_at', { ascending: true });
@@ -909,6 +860,48 @@ const Store = (() => {
   async function updateProfile(id, patch) {
     const { error } = await sb.from('profiles').update(patch).eq('id', id);
     if (error) throw error;
+  }
+
+  // ---- account creation / deletion / password (all via Edge Functions) --
+  // These are the ONLY paths that create an account, delete an account, or
+  // set someone else's password. Each call carries the current user's own
+  // session token; the Edge Function independently re-verifies (server
+  // side, using the service-role key it alone holds) that the caller is
+  // really an active Administrator before doing anything. A non-admin
+  // calling these directly — even by hand, bypassing the UI entirely —
+  // gets a 403 with no effect.
+  // Supabase's client wraps a non-2xx Edge Function response as a
+  // FunctionsHttpError whose real JSON body — {error:"..."} — sits on
+  // error.context (a Response object) rather than in `data`, so we try
+  // that first before falling back to the generic error.message.
+  async function _edgeErrorMessage(err, fallback) {
+    try {
+      if (err && err.context && typeof err.context.json === 'function') {
+        const body = await err.context.clone().json();
+        if (body && body.error) return body.error;
+      }
+    } catch (e) { /* body wasn't JSON or already consumed — fall through */ }
+    return (err && err.message) || fallback;
+  }
+  async function adminCreateUser({ name, email, password, role, username }) {
+    const { data, error } = await sb.functions.invoke('admin-create-user', { body: { name, email, password, role, username } });
+    if (error) throw new Error(await _edgeErrorMessage(error, 'Could not create the account'));
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  }
+
+  async function adminDeleteUser(userId) {
+    const { data, error } = await sb.functions.invoke('admin-delete-user', { body: { userId } });
+    if (error) throw new Error(await _edgeErrorMessage(error, 'Could not delete the account'));
+    if (data && data.error) throw new Error(data.error);
+    return data;
+  }
+
+  async function adminSetPassword(userId, password) {
+    const { data, error } = await sb.functions.invoke('admin-set-password', { body: { userId, password } });
+    if (error) throw new Error(await _edgeErrorMessage(error, 'Could not set the password'));
+    if (data && data.error) throw new Error(data.error);
+    return data;
   }
 
   // ---- boot: pull everything the app needs before first render ---------
@@ -924,8 +917,8 @@ const Store = (() => {
   return {
     loadAll, loadDatasets, persistYear, loadSettings, saveSettings,
     loadAudit, addAudit, loadTemplates, saveTemplate, deleteTemplate,
-    loadSignupCodes, createSignupCode, revokeSignupCode,
-    loadProfiles, updateProfile, renameTemplate
+    loadProfiles, updateProfile, renameTemplate,
+    adminCreateUser, adminDeleteUser, adminSetPassword
   };
 })();
 
@@ -992,12 +985,6 @@ function getSession(){
   return u?{name:u.name,username:u.username,email:u.email,role:u.role,id:u.id}:null;
 }
 
-/* ================= AUTH ================= */
-// Random invite-code text generator — the code string itself carries no privilege; the role it
-// grants and its validity (expiry/uses/revocation) are checked server-side by the Postgres
-// trigger in supabase/schema.sql whenever someone signs up with it, not by any client code.
-function genInviteCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return secureRandomChars(chars,4)+'-'+secureRandomChars(chars,4);}
-
 /* ================= ROLES & PRIVILEGES ================= */
 const ROLES=['Data Encoder','Auditor','Manager','Administrator'];
 const PRIV_DEFS=[
@@ -1014,12 +1001,13 @@ const PRIV_DEFS=[
   {key:'view_audit_logs',label:'View Audit Logs'},
   {key:'approve_data',label:'Approve Data'},
   {key:'manage_users',label:'Manage Users'},
-  {key:'manage_invite_codes',label:'Manage Invitation Codes'},
   {key:'manage_templates',label:'Manage Templates'},
   {key:'system_admin',label:'System Administration'}
 ];
 const ALL_PRIV_KEYS=PRIV_DEFS.map(p=>p.key);
-// Role-based DEFAULT privileges (section 5: role assigns defaults; Administrator may then add/remove individually).
+// Role-based DEFAULT privileges — must mirror public.default_privileges() in supabase/schema.sql,
+// which is the copy actually used when the admin-create-user Edge Function creates an account.
+// This copy is only for the admin UI's live preview (e.g. the privileges editor).
 const ROLE_DEFAULT_PRIVS={
   'Data Encoder':['import_data','edit_data','append_data','view_reports','generate_reports','download_excel','download_pdf','view_dashboard'],
   'Auditor':['view_reports','generate_reports','download_excel','download_pdf','view_dashboard','view_audit_logs'],
@@ -1040,39 +1028,10 @@ function privsOf(user){return user&&Array.isArray(user.privileges)?user.privileg
 function can(privKey){ return Auth.can(privKey); }
 function requireCan(privKey,actionLabel){ return Auth.requireCan(privKey,actionLabel,PRIV_DEFS); }
 
-/* ================= INVITATION CODE MANAGER (self sign-up) =================
-   Administrator-managed pool of codes. Each code carries the role it grants, an optional expiry
-   date, and an optional usage limit. Codes themselves live in Supabase (public.signup_codes) and
-   are validated + consumed atomically, server-side, by the handle_new_user() trigger — the client
-   only ever asks Supabase to create or revoke a code, never decides whether one is valid. */
-let SIGNUP_CODES=[];
-async function refreshSignupCodes(){ SIGNUP_CODES=await Store.loadSignupCodes(); }
-// Local display-only status (mirrors the server's own validity check, purely for the admin list UI).
-function signupCodeStatus(c){
-  if(!c)return 'not_found';
-  if(c.revoked)return 'revoked';
-  if(c.expires_at&&new Date(c.expires_at).getTime()<Date.now())return 'expired';
-  if(c.max_uses!=null&&c.used_count>=c.max_uses)return 'exhausted';
-  return 'valid';
-}
-async function createSignupCode(role,expiresAt,maxUses,note){
-  const code=genInviteCode();
-  await Store.createSignupCode({code,role,expiresAt:expiresAt?new Date(expiresAt).toISOString():null,maxUses,note});
-  addAudit('Invitation code generated','Role: '+role+(expiresAt?' • expires '+new Date(expiresAt).toLocaleDateString('en-GB'):' • no expiry')+(maxUses!=null?' • max uses '+maxUses:' • unlimited uses'));
-  await refreshSignupCodes();
-  return code;
-}
-async function revokeSignupCode(id){
-  const c=SIGNUP_CODES.find(x=>x.id===id);if(!c||c.revoked)return;
-  await Store.revokeSignupCode(id);
-  addAudit('Invitation code revoked','Code ending '+c.code.slice(-4)+' (role: '+c.role+')');
-  await refreshSignupCodes();
-}
 function showAuthView(v){
   $('#authLoginView').hidden=v!=='login';
-  $('#authRegView').hidden=v!=='register';
   $('#authForgotView').hidden=v!=='forgot';
-  $('#loginBanner').hidden=true;$('#regBanner').hidden=true;$('#fgSuccess').hidden=true;
+  $('#loginBanner').hidden=true;$('#fgSuccess').hidden=true;
 }
 const EMAIL_RE=/^[A-Za-z0-9][A-Za-z0-9._%+-]*@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 function passwordIssues(pw){
@@ -1124,8 +1083,6 @@ function setupAuth(){
     b.textContent=showing?'\ud83d\ude48':'\ud83d\udc41';
     b.setAttribute('aria-label',showing?'Hide password':'Show password');
   }));
-  $('#toRegister').addEventListener('click',()=>showAuthView('register'));
-  $('#toLogin').addEventListener('click',()=>showAuthView('login'));
   $('#toForgot').addEventListener('click',()=>showAuthView('forgot'));
   $('#fgBack').addEventListener('click',()=>showAuthView('login'));
   $('#logoutBtn').addEventListener('click',logout);
@@ -1145,41 +1102,6 @@ function setupAuth(){
     }catch(err){
       $('#loginBanner').textContent=(err&&err.message)?err.message:'Sign in failed. Check your email and password and try again.';
       $('#loginBanner').hidden=false;
-    }
-  });
-  $('#rgPass').addEventListener('input',()=>{
-    const pw=$('#rgPass').value,sc=strengthScore(pw);
-    const bar=$('#rgStrengthBar'),txt=$('#rgStrengthTxt');
-    const pct=[0,20,40,60,80,100][sc]||0;
-    const col=sc<=1?'#ef4444':sc<=2?'#f59e0b':sc<=3?'#eab308':'#22c55e';
-    bar.style.width=pct+'%';bar.style.background=col;
-    txt.textContent=pw?('Strength: '+['Very weak','Weak','Fair','Good','Strong','Very strong'][sc]):'';
-    txt.style.color=col;
-  });
-  $('#regForm').addEventListener('submit',async e=>{
-    e.preventDefault();
-    const code=$('#rgCode').value.trim().toUpperCase(),name=$('#rgName').value.trim(),username=$('#rgUser').value.trim(),email=$('#rgEmail').value.trim(),pw=$('#rgPass').value,pw2=$('#rgPass2').value;
-    let ok=true;
-    $('#rgCodeErr').textContent=code?'':'An invitation code is required';if(!code)ok=false;
-    $('#rgNameErr').textContent=(name.length>=3)?'':'Full name (min 3 characters) is required';if(name.length<3)ok=false;
-    const usernameOk=/^[a-zA-Z0-9._-]{3,32}$/.test(username);
-    $('#rgUserErr').textContent=usernameOk?'':'Username must be 3-32 characters (letters, numbers, . _ -)';if(!usernameOk)ok=false;
-    $('#rgEmailErr').textContent=EMAIL_RE.test(email)?'':'Enter a valid email address';if(!EMAIL_RE.test(email))ok=false;
-    const issues=passwordIssues(pw);
-    $('#rgPassErr').textContent=issues.length?('Password needs '+issues.join(', ')):'';if(issues.length)ok=false;
-    $('#rgPass2Err').textContent=(pw2&&pw2===pw)?'':'Passwords do not match';if(pw2!==pw||!pw2)ok=false;
-    if(!ok)return;
-    try{
-      // The invite code's validity and the role it grants are decided entirely server-side —
-      // by the handle_new_user() trigger in supabase/schema.sql — at the moment the account is
-      // created. Nothing the client sends here can grant a role the code doesn't actually carry.
-      await Auth.signUp({name,email,password:pw,inviteCode:code});
-      addAudit('Account created',(username||email)+' self-registered with an invitation code');
-      enterApp(getSession());
-      showToast('Account created \u2014 you are now signed in','success');
-    }catch(err){
-      $('#regBanner').textContent=(err&&err.message)?err.message:'Could not create the account. Check your invitation code and try again.';
-      $('#regBanner').hidden=false;
     }
   });
   $('#fgForm').addEventListener('submit',async e=>{
@@ -2414,8 +2336,9 @@ function adminTabAllowed(){
   // No role shortcut here on purpose \u2014 a forged "Administrator" value on a client object can
   // no longer grant anything. The only thing that matters is which privileges Supabase actually
   // returned for this signed-in user, and every one of the tables these actions touch enforces
-  // the same check again server-side via Row Level Security.
-  return can('system_admin')||can('manage_users')||can('manage_invite_codes')||can('manage_templates')||can('view_audit_logs');
+  // the same check again server-side via Row Level Security (and, for account creation/deletion/
+  // password changes, by the admin-* Edge Functions independently re-checking role==='Administrator').
+  return can('system_admin')||can('manage_users')||can('manage_templates')||can('view_audit_logs');
 }
 let PROFILES=[];
 async function renderAdmin(){
@@ -2424,48 +2347,33 @@ async function renderAdmin(){
   $('#adminPanel').hidden=!state.adminLoggedIn;
   if(!state.adminLoggedIn)return;
   $('#admNow').textContent='Session: '+(sess?(sess.username||sess.email):'')+' \u2022 '+(sess?sess.role:'')+' \u2022 '+new Date().toLocaleString('en-GB');
-  const seeData=can('system_admin'),seeUsers=can('manage_users'),seeCodes=can('manage_invite_codes'),seeAudit=can('view_audit_logs');
+  const seeData=can('system_admin'),seeUsers=can('manage_users'),seeAudit=can('view_audit_logs');
   $('#admDataCard').hidden=!seeData;
   $('#admSettingsCard').hidden=!seeData;
-  $('#admCodesCard').hidden=!seeCodes;
   $('#admUsersCard').hidden=!seeUsers;
   $('#admAuditCard').hidden=!seeAudit;
   if(seeData){
     $('#setLock').checked=state.settings.planLocked;
     $('#dmStats').innerHTML=YEARS.map(y=>'FY '+y+': plan <b>'+countModified(y,'plan')+'</b>, actual <b>'+countModified(y,'actual')+'</b> modified').join('<br>');
   }
-  if(seeCodes){await refreshSignupCodes();renderInviteCodes();}
   if(seeUsers){PROFILES=await Store.loadProfiles();renderUserList();}
   if(seeAudit)$('#auditBody').innerHTML=state.audit.length?state.audit.slice(0,80).map(l=>'<tr><td class="muted">'+escHtml(l.t)+'</td><td><b>'+escHtml(l.user)+'</b></td><td>'+escHtml(l.action)+'</td><td class="muted">'+escHtml(l.detail)+'</td></tr>').join(''):'<tr><td colspan="4" class="muted" style="text-align:center;padding:20px">No activity yet.</td></tr>';
 }
-function renderInviteCodes(){
-  if(!SIGNUP_CODES.length){$('#invCodeList').innerHTML='<div class="muted" style="font-size:12.5px;padding:8px 0">No invitation codes yet \u2014 generate one below.</div>';return;}
-  const statusPill={valid:'<span class="pill" style="background:#e7f6ee;color:#0a5236">Active</span>',expired:'<span class="pill warn">Expired</span>',revoked:'<span class="pill" style="background:#fdeaea;color:#c02626">Revoked</span>',exhausted:'<span class="pill warn">Uses exhausted</span>'};
-  $('#invCodeList').innerHTML=SIGNUP_CODES.map(c=>{
-    const st=signupCodeStatus(c);
-    const uses=(c.max_uses!=null)?(c.used_count+' / '+c.max_uses):(c.used_count+' / \u221e');
-    const exp=c.expires_at?new Date(c.expires_at).toLocaleDateString('en-GB'):'No expiry';
-    return '<div class="user-row" style="flex-wrap:wrap"><div style="flex:1;min-width:150px"><b style="font-size:14px;letter-spacing:.06em">'+escHtml(c.code)+'</b><div class="muted" style="font-size:11.5px">Role: '+escHtml(c.role)+' \u2022 Uses: '+uses+' \u2022 Expires: '+exp+(c.note?' \u2022 '+escHtml(c.note):'')+'</div></div>'+statusPill[st]+(st==='valid'?'<button class="btn btn-danger btn-sm" onclick="uiRevokeSignupCode('+c.id+')">Revoke</button>':'')+'</div>';
-  }).join('');
-}
-async function uiGenerateSignupCode(){
-  if(!requireCan('manage_invite_codes','Manage Invitation Codes'))return;
-  const role=$('#icRole').value;
-  const days=parseInt($('#icExpiry').value,10);
-  const maxUses=parseInt($('#icMaxUses').value,10);
-  const note=$('#icNote').value.trim();
-  const expiresAt=(isFinite(days)&&days>0)?(Date.now()+days*24*60*60*1000):null;
+function genStrongPassword(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';return secureRandomChars(chars,14);}
+async function uiCreateUser(){
+  if(!requireCan('manage_users','Manage Users'))return;
+  const name=$('#nuName').value.trim(),email=$('#nuEmail').value.trim(),role=$('#nuRole').value,password=$('#nuPass').value;
+  if(name.length<3){showToast('Enter the person\u2019s full name','error');return;}
+  if(!EMAIL_RE.test(email)){showToast('Enter a valid email address','error');return;}
+  const issues=passwordIssues(password);
+  if(issues.length){showToast('Password needs '+issues.join(', '),'error');return;}
   try{
-    const code=await createSignupCode(role,expiresAt,isFinite(maxUses)&&maxUses>0?maxUses:null,note);
-    $('#icExpiry').value='';$('#icMaxUses').value='';$('#icNote').value='';
-    renderInviteCodes();
-    showToast('Invitation code generated: '+code,'success');
-  }catch(err){ showToast('Could not generate code: '+((err&&err.message)||'unknown error'),'error'); }
-}
-async function uiRevokeSignupCode(id){
-  if(!requireCan('manage_invite_codes','Manage Invitation Codes'))return;
-  if(!confirm('Revoke this invitation code? It will stop working immediately.'))return;
-  await revokeSignupCode(id);renderInviteCodes();showToast('Invitation code revoked','warn');
+    const created=await Store.adminCreateUser({name,email,password,role});
+    addAudit('Account created','Administrator created '+(created.username||email)+' as '+role);
+    $('#nuName').value='';$('#nuEmail').value='';$('#nuPass').value='';$('#nuRole').value='Data Encoder';
+    renderAdmin();
+    showToast('Account created for '+name+' \u2014 share the password with them directly','success');
+  }catch(err){ showToast('Could not create account: '+((err&&err.message)||'unknown error'),'error'); }
 }
 function renderUserList(){
   const sess=getSession();
@@ -2476,12 +2384,13 @@ function renderUserList(){
     const isSelf=sess&&sess.id===u.id;
     const roleOpts=ROLES.map(r=>'<option'+(r===u.role?' selected':'')+'>'+r+'</option>').join('');
     const roleSel=(!can('manage_users'))?('<span class="role-tag '+cls+'">'+escHtml(u.role)+'</span>'):('<select class="sel sel-sm" data-act="chrole" data-idx="'+i+'">'+roleOpts+'</select>');
-    const resetBtn='<button class="btn btn-ghost btn-sm" data-act="reset" data-idx="'+i+'">\ud83d\udd11 Send Password Reset</button>';
+    const pwBtn='<button class="btn btn-ghost btn-sm" data-act="setpass" data-idx="'+i+'">\ud83d\udd11 Set Password</button>';
     const privBtn='<button class="btn btn-ghost btn-sm" data-act="privs" data-idx="'+i+'">\ud83d\udd27 Privileges</button>';
     const toggleBtn=isSelf?'':('<button class="btn btn-ghost btn-sm" data-act="toggleactive" data-idx="'+i+'">'+(u.active===false?'\u2713 Activate':'\u26d4 Deactivate')+'</button>');
-    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+escHtml((u.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+escHtml(u.username||'')+'</div></div>'+roleSel+status+privBtn+resetBtn+toggleBtn+'</div>';
+    const delBtn=isSelf?'':('<button class="btn btn-danger btn-sm" data-act="delete" data-idx="'+i+'">\ud83d\uddd1 Delete</button>');
+    return '<div class="user-row" style="flex-wrap:wrap"><div class="avatar">'+escHtml((u.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())+'</div><div style="flex:1;min-width:120px"><b style="font-size:13px">'+escHtml(u.name)+'</b><div class="muted" style="font-size:11.5px">'+escHtml(u.username||'')+'</div></div>'+roleSel+status+privBtn+pwBtn+toggleBtn+delBtn+'</div>';
   }).join('');
-  $('#userList').innerHTML=html;
+  $('#userList').innerHTML=html||'<div class="muted" style="font-size:12.5px;padding:8px 0">No other accounts yet \u2014 create one above.</div>';
 }
 async function uiChangeRole(idx,newRole){
   if(!requireCan('manage_users','Manage Users'))return;
@@ -2507,6 +2416,32 @@ async function uiToggleActive(idx){
     renderAdmin();
     showToast(next?'Account activated':'Account deactivated \u2014 they can no longer access any data','warn');
   }catch(err){ showToast('Could not update account: '+((err&&err.message)||'the last Administrator account cannot be deactivated'),'error'); renderAdmin(); }
+}
+async function uiDeleteUser(idx){
+  if(!requireCan('manage_users','Manage Users'))return;
+  const u=PROFILES[idx];if(!u)return;
+  if(!confirm('Permanently delete '+u.name+'\u2019s account? This cannot be undone \u2014 they will lose access immediately and their login will no longer exist.'))return;
+  try{
+    await Store.adminDeleteUser(u.id);
+    addAudit('Account deleted',u.username||u.name);
+    PROFILES=PROFILES.filter(x=>x.id!==u.id);
+    renderUserList();
+    showToast('Account deleted','warn');
+  }catch(err){ showToast('Could not delete account: '+((err&&err.message)||'the last Administrator account cannot be deleted'),'error'); }
+}
+async function uiSetPassword(idx){
+  if(!requireCan('manage_users','Manage Users'))return;
+  const u=PROFILES[idx];if(!u)return;
+  const pw=prompt('Enter a new password for '+u.name+' (min 8 characters), or leave blank to generate one:');
+  if(pw===null)return;
+  const password=pw.trim()||genStrongPassword();
+  const issues=passwordIssues(password);
+  if(issues.length){showToast('Password needs '+issues.join(', '),'error');return;}
+  try{
+    await Store.adminSetPassword(u.id,password);
+    addAudit('Password set by Administrator',u.username||u.name);
+    showToast(pw.trim()?'Password updated':('New password for '+u.name+': '+password+' \u2014 copy it now, it will not be shown again'),'success');
+  }catch(err){ showToast('Could not set password: '+((err&&err.message)||'unknown error'),'error'); }
 }
 function showPrivilegesModal(idx){
   if(!requireCan('manage_users','Manage Users'))return;
@@ -2544,9 +2479,10 @@ document.addEventListener('click',e=>{
   if(!btn)return;
   const idx=btn.dataset.idx!=null?parseInt(btn.dataset.idx,10):null;
   const act=btn.dataset.act;
-  if(act==='reset')adminResetPassword(idx);
+  if(act==='setpass')uiSetPassword(idx);
   else if(act==='privs')showPrivilegesModal(idx);
   else if(act==='toggleactive')uiToggleActive(idx);
+  else if(act==='delete')uiDeleteUser(idx);
 });
 document.addEventListener('change',e=>{
   const sel=e.target.closest('select[data-act="chrole"]');
@@ -2554,28 +2490,6 @@ document.addEventListener('change',e=>{
   const idx=parseInt(sel.dataset.idx,10);
   uiChangeRole(idx,sel.value);
 });
-// Admins no longer create accounts or set passwords directly — a static site with only the
-// anon key has no way to do that securely (it would need a service-role key exposed in the
-// browser, which defeats Row Level Security entirely). Instead: an admin issues a role-scoped
-// invitation code above, and the new user creates their own account with it via the normal
-// sign-up form — the same self-service flow every user goes through.
-async function adminResetPassword(idx){
-  if(!requireCan('manage_users','Manage Users'))return;
-  const u=PROFILES[idx];
-  if(!u){showToast('User not found','error');return;}
-  if(!u.username&&!u.email){showToast('No email on file for this user','error');return;}
-  if(!confirm('Send a password reset email to '+(u.name)+'?'))return;
-  try{
-    // We only have the profile's username/email cached client-side for display; Supabase needs
-    // the account's actual auth email, which the admin enters here since we deliberately don't
-    // expose a table of every user's email to the browser beyond what RLS already allows.
-    const email=prompt('Confirm the email address for '+u.name+':', u.email||'');
-    if(!email)return;
-    await sb.auth.resetPasswordForEmail(email);
-    addAudit('Password reset requested','Administrator sent a password reset email to '+(u.username||email));
-    showToast('Password reset email sent','success');
-  }catch(err){ showToast('Could not send reset email: '+((err&&err.message)||'unknown error'),'error'); }
-}
 function saveSettings(){
   if(!requireCan('system_admin','System Administration'))return;
   state.settings.planLocked=$('#setLock').checked;persist();addAudit('Settings saved','Plan locked: '+(state.settings.planLocked?'Yes':'No'));showToast('Settings saved','success');
@@ -2614,6 +2528,7 @@ function setupApp(){
   $('#diWrap').addEventListener('change',onCellEdit);
   $('#diWrap').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('cell'))e.target.blur();});
   $('#importFile').addEventListener('change',e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value='';});
+  $('#nuPassGen').addEventListener('click',()=>{$('#nuPass').value=genStrongPassword();});
   $('#monYear').addEventListener('change',e=>{syncYear(e.target.value);safeRender(renderMonthly);});
   $('#monMonth').addEventListener('change',e=>{state.monMonth=+e.target.value;safeRender(renderMonthly);});
   $('#monUnit').addEventListener('change',e=>{state.monUnit=e.target.value;safeRender(renderMonthly);});
