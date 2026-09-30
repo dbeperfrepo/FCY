@@ -774,43 +774,261 @@ const Auth = (() => {
 const Store = (() => {
 
   // ---- datasets (plan/actual per fiscal year) ----------------------
-  async function loadDatasets(YEARS, state) {
+  // RELIABLE SAVING (fixes data "disappearing" after a while):
+  //  * every write is awaited, verified against the database response and, on failure, kept as
+  //    "dirty" and retried — the user is told (see save-status banner) instead of a silent console log;
+  //  * a save only sends the cells THIS browser changed, merged onto the latest row in the database,
+  //    so a stale tab / another user's work can never be overwritten by old in-memory figures;
+  //  * nothing is written unless the saved data was loaded successfully first, so a failed load can
+  //    never push the built-in baseline figures over the real data;
+  //  * approvals are merged per key for the same reason.
+  let loadOK = false, loadAttempted = false, lastError = null, retryTimer = null, retryCount = 0;
+  const saved = {};      // "year|kind" -> last copy of that row known to be in Supabase
+  const dirty = {}, running = {}, rerun = {}, forceFull = {}, lastArgs = {};
+  let sRunning = null, sRerun = false, pendingSettingsFlag = false, settingsArgs = null;
+  const pendingKeys = new Set();
+  const listeners = [];
+  const _key = (y, k) => y + '|' + k;
+  const _clone = o => JSON.parse(JSON.stringify(o));
+  const _near = (a, b) => Math.abs((a || 0) - (b || 0)) < 1e-9;
+
+  function _errMsg(err) {
+    const m = (err && (err.message || err.details || err.hint)) || String(err || 'unknown error');
+    if ((err && (err.code === '42501' || err.status === 403)) || /row-level security|permission denied|not permitted/i.test(m))
+      return 'your account is not allowed to save this data in the database (permissions) — contact the Administrator';
+    if ((err && err.status === 401) || /jwt|token|expired|not authenticated/i.test(m))
+      return 'your session has expired — please sign in again';
+    if (/failed to fetch|network|load failed|timeout/i.test(m))
+      return 'network problem — the app will keep retrying';
+    return m;
+  }
+  function _isAuthErr(err) {
+    const m = (err && err.message) || '';
+    return !!(err && (err.status === 401 || /jwt|token.*expired|expired.*token/i.test(m)));
+  }
+  function hasPending() {
+    return !!(Object.keys(dirty).some(k => dirty[k]) || Object.keys(running).some(k => running[k]) || sRunning || pendingKeys.size || pendingSettingsFlag);
+  }
+  function isReady() { return loadOK; }
+  function _emit() {
+    const st = { pending: hasPending(), error: lastError ? _errMsg(lastError) : null, ready: loadOK, attempted: loadAttempted };
+    listeners.forEach(fn => { try { fn(st); } catch (e) { console.error(e); } });
+  }
+  function onSaveStatus(fn) { listeners.push(fn); }
+  function _scheduleRetry() {
+    _emit();
+    if (retryTimer || retryCount >= 6) return;
+    retryCount++;
+    retryTimer = setTimeout(() => { retryTimer = null; retryNow(); }, Math.min(60000, 5000 * retryCount));
+  }
+  function retryNow() {
+    lastError = null;
+    Object.keys(dirty).forEach(key => {
+      if (dirty[key] && lastArgs[key] && !running[key]) {
+        const a = lastArgs[key];
+        persistDataset(a.year, a.kind, a.state, a.rawOf, a.baselineRaw, a.onMerged, false);
+      }
+    });
+    if ((pendingKeys.size || pendingSettingsFlag) && settingsArgs && !sRunning) persistSettings(settingsArgs.state, {});
+    _emit();
+  }
+  async function flush() {
+    for (let i = 0; i < 50; i++) {
+      const ps = Object.keys(running).map(k => running[k]).concat([sRunning]).filter(Boolean);
+      if (!ps.length) break;
+      await Promise.all(ps);
+    }
+    return !hasPending();
+  }
+
+  // skipIfPending: background refreshes must never overwrite local edits that are not saved yet.
+  async function loadDatasets(YEARS, state, skipIfPending) {
     const { data, error } = await sb.from('datasets').select('year,kind,data');
-    if (error) { console.error(error); return; }
+    if (error) { console.error('loadDatasets failed', error); return false; }
+    if (skipIfPending && hasPending()) return false;
     (data || []).forEach(row => {
       if (!YEARS.includes(row.year)) return;
       if (!state.datasets[row.year]) return;
       const ds = state.datasets[row.year][row.kind];
       if (!ds) return;
       Object.assign(ds, row.data); // opening0 + every line-item array
+      saved[_key(row.year, row.kind)] = _clone(row.data);
     });
+    return true;
   }
 
-  // Call after any edit to state.datasets[y].plan/actual (same call sites
-  // that used to call the old persist()). Writes only the current year's
-  // two rows — cheap, and matches how the UI edits one year at a time.
-  async function persistYear(year, state, rawOf) {
-    const rows = [
-      { year, kind: 'plan',   data: rawOf(state.datasets[year].plan),   updated_by: Auth.currentUser()?.id },
-      { year, kind: 'actual', data: rawOf(state.datasets[year].actual), updated_by: Auth.currentUser()?.id }
-    ];
-    const { error } = await sb.from('datasets').upsert(rows, { onConflict: 'year,kind' });
-    if (error) console.error('persistYear failed', error);
+  function _rawEqual(a, b) {
+    const keys = new Set(Object.keys(a || {}).concat(Object.keys(b || {})));
+    for (const k of keys) {
+      const x = a ? a[k] : undefined, y = b ? b[k] : undefined;
+      if (Array.isArray(x) || Array.isArray(y)) {
+        if (!Array.isArray(x) || !Array.isArray(y) || x.length !== y.length) return false;
+        for (let i = 0; i < x.length; i++) if (Math.abs((x[i] || 0) - (y[i] || 0)) > 1e-6) return false;
+      } else if (Math.abs((x || 0) - (y || 0)) > 1e-6) return false;
+    }
+    return true;
   }
 
-  // ---- app settings (plan lock, approvals, active year) --------------
-  async function loadSettings(state) {
-    const { data, error } = await sb.from('app_settings').select('*').eq('id', 1).single();
-    if (error || !data) return;
+  async function _saveDatasetOnce(year, kind, state, rawOf, baselineRaw, force) {
+    const key = _key(year, kind);
+    const mine = rawOf(state.datasets[year][kind]);
+    let merged;
+    if (force) {
+      merged = mine; // explicit admin action (reset / backup import): overwrite the stored row
+    } else {
+      const { data: cur, error: e1 } = await sb.from('datasets').select('data').eq('year', year).eq('kind', kind).maybeSingle();
+      if (e1) throw e1;
+      if (!cur || !cur.data) {
+        merged = mine; // first time this row is stored
+      } else {
+        const base = saved[key] || baselineRaw || {};
+        merged = _clone(cur.data);
+        Object.keys(mine).forEach(k => {
+          const mv = mine[k], bv = base[k];
+          if (Array.isArray(mv)) {
+            if (!Array.isArray(merged[k])) merged[k] = new Array(mv.length).fill(0);
+            mv.forEach((x, i) => { if (!Array.isArray(bv) || bv[i] === undefined || !_near(x, bv[i])) merged[k][i] = x; });
+          } else if (bv === undefined || !_near(mv, bv)) {
+            merged[k] = mv;
+          }
+        });
+      }
+    }
+    const { data: up, error: e2 } = await sb.from('datasets')
+      .upsert({ year, kind, data: merged, updated_by: Auth.currentUser()?.id }, { onConflict: 'year,kind' })
+      .select('data');
+    if (e2) throw e2;
+    if (!up || !up.length) throw new Error('The database did not confirm the save (permission denied?)');
+    saved[key] = _clone(up[0].data);
+    return { merged: saved[key], mine };
+  }
+
+  // Call after any edit to state.datasets[y].plan/actual. Returns a promise<boolean>.
+  function persistDataset(year, kind, state, rawOf, baselineRaw, onMerged, overwrite) {
+    const key = _key(year, kind);
+    if (!loadOK) {
+      lastError = new Error('Saved data was not loaded from the server, so saving is blocked to protect existing data. Reload the page.');
+      _emit();
+      return Promise.resolve(false);
+    }
+    lastArgs[key] = { year, kind, state, rawOf, baselineRaw, onMerged };
+    if (overwrite) forceFull[key] = true;
+    dirty[key] = true;
+    _emit();
+    if (running[key]) { rerun[key] = true; return running[key]; }
+    const p = (async () => {
+      let attempt = 0;
+      for (;;) {
+        rerun[key] = false;
+        try {
+          const force = !!forceFull[key];
+          const res = await _saveDatasetOnce(year, kind, state, rawOf, baselineRaw, force);
+          if (force) forceFull[key] = false;
+          lastError = null;
+          if (onMerged) { try { onMerged(year, kind, res.merged, res.mine); } catch (e) { console.error(e); } }
+          if (!rerun[key]) { dirty[key] = false; retryCount = 0; break; }
+        } catch (err) {
+          console.error('Save failed for ' + key, err);
+          attempt++;
+          if (attempt === 1 && _isAuthErr(err)) { try { await sb.auth.refreshSession(); } catch (e) { /* fall through */ } continue; }
+          lastError = err; _scheduleRetry();
+          return false;
+        }
+      }
+      return true;
+    })().finally(() => { running[key] = null; _emit(); });
+    running[key] = p;
+    return p;
+  }
+
+  // Re-reads the row from the database and confirms it equals what is on screen.
+  async function verifyDataset(year, kind, state, rawOf) {
+    try {
+      const { data, error } = await sb.from('datasets').select('data').eq('year', year).eq('kind', kind).maybeSingle();
+      if (error) throw error;
+      if (!data) return { ok: false, error: 'no saved copy exists in the database' };
+      return { ok: _rawEqual(rawOf(state.datasets[year][kind]), data.data) };
+    } catch (err) { return { ok: false, error: _errMsg(err) }; }
+  }
+
+  // ---- app settings (plan lock, approvals) ----------------------------
+  async function loadSettings(state, skipIfPending) {
+    const { data, error } = await sb.from('app_settings').select('*').eq('id', 1).maybeSingle();
+    if (error) { console.error('loadSettings failed', error); return false; }
+    if (skipIfPending && hasPending()) return false;
+    if (!data) return true;
     state.settings = data.settings || { planLocked: false };
     state.approvals = data.approvals || {};
+    return true;
   }
 
-  async function saveSettings(state) {
-    const { error } = await sb.from('app_settings')
-      .update({ settings: state.settings, approvals: state.approvals, updated_at: new Date().toISOString() })
-      .eq('id', 1);
-    if (error) console.error('saveSettings failed', error);
+  async function _saveSettingsOnce(state, keys, setFlag) {
+    const { data: cur, error: e1 } = await sb.from('app_settings').select('settings,approvals').eq('id', 1).maybeSingle();
+    if (e1) throw e1;
+    const approvals = Object.assign({}, (cur && cur.approvals) || {});
+    keys.forEach(k => { if (state.approvals[k] !== undefined) approvals[k] = state.approvals[k]; });
+    const settings = setFlag ? Object.assign({}, (cur && cur.settings) || {}, state.settings) : ((cur && cur.settings) || state.settings);
+    const row = { settings, approvals, updated_at: new Date().toISOString() };
+    let res = await sb.from('app_settings').update(row).eq('id', 1).select('settings,approvals');
+    if (res.error) throw res.error;
+    if (!res.data || !res.data.length) { // row missing, or the update was silently filtered out
+      res = await sb.from('app_settings').insert(Object.assign({ id: 1 }, row)).select('settings,approvals');
+      if (res.error) throw res.error;
+      if (!res.data || !res.data.length) throw new Error('The database did not confirm the save (permission denied?)');
+    }
+    const out = res.data[0];
+    const next = Object.assign({}, out.approvals || {});
+    pendingKeys.forEach(k => { if (!keys.includes(k)) next[k] = state.approvals[k]; });
+    state.approvals = next;
+    if (!pendingSettingsFlag || setFlag) state.settings = Object.assign({ planLocked: false }, out.settings || {});
+  }
+
+  // opts.approvalKeys: approval entries this browser changed; opts.settings: true if planLock etc. changed
+  function persistSettings(state, opts) {
+    opts = opts || {};
+    if (!loadOK) {
+      lastError = new Error('Saved data was not loaded from the server, so saving is blocked to protect existing data. Reload the page.');
+      _emit();
+      return Promise.resolve(false);
+    }
+    settingsArgs = { state };
+    (opts.approvalKeys || []).forEach(k => pendingKeys.add(k));
+    if (opts.settings) pendingSettingsFlag = true;
+    _emit();
+    if (sRunning) { sRerun = true; return sRunning; }
+    const p = (async () => {
+      let attempt = 0;
+      for (;;) {
+        sRerun = false;
+        const keys = Array.from(pendingKeys), setFlag = pendingSettingsFlag;
+        try {
+          await _saveSettingsOnce(state, keys, setFlag);
+          keys.forEach(k => pendingKeys.delete(k));
+          if (setFlag) pendingSettingsFlag = false;
+          lastError = null;
+          if (!sRerun) { retryCount = 0; break; }
+        } catch (err) {
+          console.error('Saving settings/approvals failed', err);
+          attempt++;
+          if (attempt === 1 && _isAuthErr(err)) { try { await sb.auth.refreshSession(); } catch (e) { /* fall through */ } continue; }
+          lastError = err; _scheduleRetry();
+          return false;
+        }
+      }
+      return true;
+    })().finally(() => { sRunning = null; _emit(); });
+    sRunning = p;
+    return p;
+  }
+  // Used when the caller gives up on an approval change (e.g. reverts it after a failure).
+  function discardPendingApproval(key) { pendingKeys.delete(key); lastError = null; _emit(); }
+
+  // Background refresh: pulls the latest datasets/approvals, never overwriting unsaved local edits.
+  async function reloadData(YEARS, state) {
+    const r = await Promise.all([loadDatasets(YEARS, state, true), loadSettings(state, true)]);
+    const ok = r[0] === true && r[1] === true;
+    if (ok) loadOK = true;
+    return ok;
   }
 
   // ---- audit log -------------------------------------------------------
@@ -906,16 +1124,27 @@ const Store = (() => {
 
   // ---- boot: pull everything the app needs before first render ---------
   async function loadAll(YEARS, state, rawOf) {
-    await Promise.all([
+    loadAttempted = true;
+    const run = () => Promise.all([
       loadDatasets(YEARS, state),
       loadSettings(state),
       loadAudit(state),
       loadTemplates(state)
     ]);
+    let r = await run();
+    if (!(r[0] === true && r[1] === true)) { // one retry after refreshing the session
+      try { await sb.auth.refreshSession(); } catch (e) { /* ignore */ }
+      r = await run();
+    }
+    loadOK = (r[0] === true && r[1] === true);
+    _emit();
+    return loadOK;
   }
 
   return {
-    loadAll, loadDatasets, persistYear, loadSettings, saveSettings,
+    loadAll, loadDatasets, loadSettings, reloadData,
+    persistDataset, persistSettings, verifyDataset, discardPendingApproval,
+    hasPending, isReady, flush, retryNow, onSaveStatus,
     loadAudit, addAudit, loadTemplates, saveTemplate, deleteTemplate,
     loadProfiles, updateProfile, renameTemplate,
     adminCreateUser, adminDeleteUser, adminSetPassword
@@ -1221,14 +1450,69 @@ function recalcAll(){YEARS.forEach(y=>{recalc(state.datasets[y].plan);recalc(sta
 // through Store instead of localStorage. Writes are fire-and-forget (matching the old synchronous
 // call-site pattern); every write is independently re-checked server-side by Row Level Security,
 // so a rejected write here can never silently "succeed" from the writer's point of view — Supabase
-// returns an error, which is logged to the console (see Store.persistYear/saveSettings/etc).
+// returns an error, which is logged to the console (see Store.persistDataset/persistSettings).
 function rawOf(ds){const o={opening0:ds.opening0};RAW_KEYS.forEach(k=>o[k]=ds[k]);return o;}
-function persist(){YEARS.forEach(y=>{Store.persistYear(y,state,rawOf);});Store.saveSettings(state);}
+function persistData(y,k,overwrite){return Store.persistDataset(y,k,state,rawOf,rawOf(ORIGINAL[y][k]),applyMergedLocal,!!overwrite);}
+function persistAll(overwrite){return Promise.all(YEARS.reduce((a,y)=>a.concat(['plan','actual'].map(k=>persistData(y,k,overwrite))),[]));}
+function persist(){return persistAll(false);}
+/* After a save, adopt other users' changes for every cell this browser has NOT edited since the save started. */
+function applyMergedLocal(y,k,merged,snap){
+  const ds=state.datasets[y][k];let changed=false;
+  Object.keys(merged).forEach(key=>{
+    const mv=merged[key];
+    if(Array.isArray(mv)){
+      if(!Array.isArray(ds[key])){ds[key]=mv.slice();changed=true;return;}
+      mv.forEach((x,i)=>{const sv=snap[key]?snap[key][i]:0;if(Math.abs((ds[key][i]||0)-(sv||0))<1e-9&&Math.abs((ds[key][i]||0)-(x||0))>1e-9){ds[key][i]=x;changed=true;}});
+    }else if(typeof mv==='number'){
+      if(Math.abs((ds[key]||0)-(snap[key]||0))<1e-9&&Math.abs((ds[key]||0)-mv)>1e-9){ds[key]=mv;changed=true;}
+    }
+  });
+  if(changed){recalc(ds);refreshStatusChip();showToast('Updated with changes saved by another user','warn');
+    const ae=document.activeElement;if(state.tab==='datainput'&&!(ae&&ae.classList&&ae.classList.contains('cell')))safeRender(renderDataInput);}
+}
+function rerenderCurrent(){const t=state.tab;const m={home:renderHome,dashboard:renderDashboard,report:renderReport,monthly:renderMonthly,period:renderPeriod,pivot:renderPivotOutput,mpnd:renderMPD,datainput:renderDataInput};if(m[t])safeRender(m[t]);}
+let _refreshing=false;
+async function refreshFromServer(){
+  if(_refreshing||!appStarted||!document.body.classList.contains('authed')||Store.hasPending())return false;
+  _refreshing=true;
+  try{
+    const snap=()=>JSON.stringify([YEARS.map(y=>[rawOf(state.datasets[y].plan),rawOf(state.datasets[y].actual)]),state.approvals,state.settings]);
+    const before=snap();
+    const ok=await Store.reloadData(YEARS,state);
+    if(!ok)return false;
+    recalcAll();
+    if(snap()!==before){
+      refreshStatusChip();
+      const ae=document.activeElement;
+      if(!(ae&&ae.classList&&ae.classList.contains('cell')))rerenderCurrent();
+      showToast('Data refreshed — latest saved figures loaded','success');
+    }
+    return true;
+  }catch(e){console.error('refreshFromServer failed',e);return false;}
+  finally{_refreshing=false;}
+}
+/* Save-status banner: the user always sees whether their work is safely stored. */
+function saveStatusInit(){
+  const el=document.createElement('div');el.id='saveStatus';
+  el.style.cssText='position:fixed;left:16px;bottom:16px;z-index:2600;max-width:min(480px,calc(100vw - 32px));padding:10px 14px;border-radius:12px;font:600 12.5px Inter,system-ui,sans-serif;box-shadow:0 10px 30px -10px rgba(0,0,0,.35);display:none;align-items:center;gap:10px;line-height:1.4';
+  document.body.appendChild(el);
+  let hideT=null,wasPending=false;
+  Store.onSaveStatus(st=>{
+    clearTimeout(hideT);
+    const show=(bg,fg,html,btn,fn)=>{el.style.background=bg;el.style.color=fg;el.innerHTML='<span>'+html+'</span>'+(btn?'<button type="button" style="border:0;border-radius:8px;padding:5px 10px;font-weight:700;cursor:pointer;background:#fff;color:#152420">'+btn+'</button>':'');el.style.display='flex';const b=el.querySelector('button');if(b&&fn)b.onclick=fn;};
+    if(st.attempted&&!st.ready){show('#fdeeee','#c02626','⚠ Saved data could not be loaded from the server — editing is disabled to protect the existing data.','Reload',()=>location.reload());}
+    else if(st.error){show('#fdeeee','#c02626','⚠ Changes are NOT saved yet: '+escHtml(st.error)+'. Retrying automatically.','Retry now',()=>Store.retryNow());}
+    else if(st.pending){wasPending=true;show('#fff7e0','#7a5a00','⏳ Saving…');}
+    else if(wasPending){wasPending=false;show('#e7f6ee','#0a5236','✓ All changes saved');hideT=setTimeout(()=>{el.style.display='none';},2500);}
+    else el.style.display='none';
+  });
+}
 function saveLog(){/* no-op: each audit entry is written individually by Store.addAudit as it happens */}
 function saveTemplates(){/* no-op: template writes go through Store.saveTemplate/deleteTemplate directly */}
 async function loadData(){
-  await Store.loadAll(YEARS,state,rawOf);
+  const ok=await Store.loadAll(YEARS,state,rawOf);
   recalcAll();
+  if(!ok)showToast('Could not load the saved data from the server. Editing is disabled until you reload, so existing data is never overwritten.','error');
 }
 function countModified(y,dk){let n=0;EDITABLE.forEach(k=>{for(let m=0;m<12;m++){if(Math.abs(state.datasets[y][dk][k][m]-ORIGINAL[y][dk][k][m])>TOL)n++;}});return n;}
 function totalModified(){return YEARS.reduce((a,y)=>a+countModified(y,'plan')+countModified(y,'actual'),0);}
@@ -1314,11 +1598,11 @@ function switchTab(name){
   if(name==='period')safeRender(renderPeriod);
   if(name==='pivot')safeRender(renderPivotOutput);
   if(name==='mpnd')safeRender(renderMPD);
-  if(name==='datainput')safeRender(renderDataInput);
+  if(name==='datainput'){safeRender(renderDataInput);refreshFromServer();}
   if(name==='admin')safeRender(renderAdmin);
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function syncYear(y){if(!YEARS.includes(y))return;state.year=y;state.monYear=y;state.perYear=y;state.mpdYear=y;state.monMonth=latestActualIdx(y);state.mpdMonth=latestActualIdx(y);applyYear();persist();}
+function syncYear(y){if(!YEARS.includes(y))return;state.year=y;state.monYear=y;state.perYear=y;state.mpdYear=y;state.monMonth=latestActualIdx(y);state.mpdMonth=latestActualIdx(y);applyYear();}
 function setYear(y){if(!YEARS.includes(y))return;syncYear(y);switchTab(state.tab);showToast('Switched to FY '+y,'success');}
 function renderYearSeg(){$('#yearSeg').innerHTML=YEARS.map(y=>'<button data-year="'+y+'" onclick="setYear(\''+y+'\')">FY '+y+'</button>').join('');}
 
@@ -2167,7 +2451,7 @@ function renderMPD(){
   const pcum=k=>PA?cum(PA,k):null;
   const euroOn=Math.abs(P.euroAdj[m])>TOL||Math.abs(A.euroAdj[m])>TOL||Math.abs(cum(P,'euroAdj'))>TOL||Math.abs(cum(A,'euroAdj'))>TOL;
   let sn=0;const rows=[];
-  rows.push({sn:String(++sn),label:'Beginning Balance in USD',mp:P.opening[m],ma:A.opening[m],cp:P.opening[m],ca:A.opening[m],py:PA?PA.opening[m]:null,kind:'bal'});
+  rows.push({sn:String(++sn),label:'Beginning Balance in USD',mp:P.opening[m],ma:A.opening[m],cp:P.opening[0],ca:A.opening[0],py:PA?PA.opening[0]:null,kind:'bal'});
   rows.push({sn:String(++sn),label:'Cash Inflows in USD',mp:P.totalInflows[m],ma:A.totalInflows[m],cp:cum(P,'totalInflows'),ca:cum(A,'totalInflows'),py:pcum('totalInflows'),kind:'in'});
   rows.push({sn:String(++sn),label:'Cash Outflows in USD',mp:P.totalOutflows[m],ma:A.totalOutflows[m],cp:cum(P,'totalOutflows'),ca:cum(A,'totalOutflows'),py:pcum('totalOutflows'),kind:'out'});
   rows.push({sn:String(++sn),label:'Excess/(Deficit) During the Period (Inflows − Outflows)',mp:P.totalInflows[m]-P.totalOutflows[m],ma:A.totalInflows[m]-A.totalOutflows[m],cp:cum(P,'totalInflows')-cum(P,'totalOutflows'),ca:cum(A,'totalInflows')-cum(A,'totalOutflows'),py:PA?(pcum('totalInflows')-pcum('totalOutflows')):null,kind:'net'});
@@ -2274,37 +2558,56 @@ function renderDataInput(){
 }
 function updateDerived(dsKey){const ds=state.datasets[state.year][dsKey];['opening','totalInflows','totalOutflows','closing'].forEach(k=>{for(let m=0;m<12;m++){const el=document.getElementById('dv-'+dsKey+'-'+k+'-'+m);if(el)el.textContent=fmt2(ds[k][m]);}const gt=document.getElementById('dv-'+dsKey+'-'+k+'-gt');if(gt)gt.textContent=fmt2(k==='opening'?ds[k][0]:k==='closing'?ds[k][11]:sum(ds[k]));});}
 function updateDiSummary(){const dsKey=state.diDs,ds=state.datasets[state.year][dsKey];const mod=countModified(state.year,dsKey),li=latestActualIdx(state.year);const locked=dsKey==='plan'&&state.settings.planLocked;$('#diSummary').innerHTML='<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:13px"><span><b>FY '+state.year+'</b> — '+cap(dsKey)+'</span><span class="pill">'+(mod?mod+' modified':'No modifications')+'</span><span class="pill">Ending ('+MS[li]+'): '+fmtUSD(ds.closing[li])+'</span>'+(locked?'<span class="pill" style="background:#fdeaea;color:#c02626">🔒 Plan locked</span>':'')+'</div>';}
-function onCellEdit(e){const inp=e.target;if(!inp.classList||!inp.classList.contains('cell'))return;if(!requireCan('edit_data','Edit Data')){inp.value=fmt2(state.datasets[state.year][inp.dataset.ds][inp.dataset.key][+inp.dataset.m]);return;}const dsKey=inp.dataset.ds,key=inp.dataset.key,m=+inp.dataset.m;let v=parseNum(inp.value);if(!isFinite(v))v=0;v=Math.round(v*100)/100;const ds=state.datasets[state.year][dsKey];ds[key][m]=v;recalc(ds);inp.value=fmt2(v);inp.classList.toggle('modified',Math.abs(v-ORIGINAL[state.year][dsKey][key][m])>TOL);updateDerived(dsKey);const rt=document.getElementById('rt-'+dsKey+'-'+key);if(rt)rt.textContent=fmt2(sum(ds[key]));updateDiSummary();refreshStatusChip();persist();addAudit('Data edit','FY '+state.year+' '+cap(dsKey)+' • '+ITEM_MAP[key].label+' • '+MS[m]+' → '+fmtUSD(v));showToast('Saved — recalculated','success');}
-function resetDataset(){if(!requireCan('delete_data','Delete Data'))return;const dsKey=state.diDs;if(!confirm('Reset FY '+state.year+' '+cap(dsKey)+'?'))return;state.datasets[state.year][dsKey]=clone(ORIGINAL[state.year][dsKey]);recalc(state.datasets[state.year][dsKey]);persist();refreshStatusChip();renderDataInput();addAudit('Data reset','FY '+state.year+' '+cap(dsKey)+' restored to baseline');showToast('Restored to baseline','warn');}
+function onCellEdit(e){const inp=e.target;if(!inp.classList||!inp.classList.contains('cell'))return;if(!requireCan('edit_data','Edit Data')){inp.value=fmt2(state.datasets[state.year][inp.dataset.ds][inp.dataset.key][+inp.dataset.m]);return;}if(!Store.isReady()){inp.value=fmt2(state.datasets[state.year][inp.dataset.ds][inp.dataset.key][+inp.dataset.m]);showToast('Saved data is not loaded from the server — reload the page before editing so nothing is overwritten','error');return;}const dsKey=inp.dataset.ds,key=inp.dataset.key,m=+inp.dataset.m;let v=parseNum(inp.value);if(!isFinite(v))v=0;v=Math.round(v*100)/100;const ds=state.datasets[state.year][dsKey];ds[key][m]=v;recalc(ds);inp.value=fmt2(v);inp.classList.toggle('modified',Math.abs(v-ORIGINAL[state.year][dsKey][key][m])>TOL);updateDerived(dsKey);const rt=document.getElementById('rt-'+dsKey+'-'+key);if(rt)rt.textContent=fmt2(sum(ds[key]));updateDiSummary();refreshStatusChip();persistData(state.year,dsKey);addAudit('Data edit','FY '+state.year+' '+cap(dsKey)+' • '+ITEM_MAP[key].label+' • '+MS[m]+' → '+fmtUSD(v));showToast('Recalculated — saving to the database…','success');}
+function resetDataset(){if(!requireCan('delete_data','Delete Data'))return;const dsKey=state.diDs;if(!confirm('Reset FY '+state.year+' '+cap(dsKey)+'?'))return;state.datasets[state.year][dsKey]=clone(ORIGINAL[state.year][dsKey]);recalc(state.datasets[state.year][dsKey]);persistData(state.year,dsKey,true);refreshStatusChip();renderDataInput();addAudit('Data reset','FY '+state.year+' '+cap(dsKey)+' restored to baseline');showToast('Restored to baseline','warn');}
 
 /* ================= APPROVAL WORKFLOW (Manager review of a submitted dataset) ================= */
 function approvalKey(){return state.year+'|'+state.diDs;}
 function currentApproval(){return state.approvals[approvalKey()]||{status:'none'};}
-function submitForApproval(){
+/* Put a failed approval change back exactly as it was, and stop the background retry from re-sending it. */
+function revertApproval(key,prev){if(prev===undefined)delete state.approvals[key];else state.approvals[key]=prev;Store.discardPendingApproval(key);renderDataInput();}
+async function submitForApproval(){
   if(!requireCan('edit_data','Edit Data')&&!requireCan('generate_reports','Generate Reports'))return;
-  const sess=getSession();
-  state.approvals[approvalKey()]={status:'submitted',by:sess?(sess.username||sess.email):'unknown',at:Date.now(),note:''};
-  persist();renderDataInput();
-  addAudit('Submitted for approval','FY '+state.year+' '+cap(state.diDs));
+  if(!Store.isReady()){showToast('Saved data is not loaded from the server — reload the page first','error');return;}
+  const sess=getSession(),key=approvalKey(),y=state.year,k=state.diDs;
+  showToast('Saving and verifying your figures…','warn');
+  const wrote=await persistData(y,k);
+  const v=wrote?await Store.verifyDataset(y,k,state,rawOf):{ok:false};
+  if(!v.ok){showToast('NOT submitted — your figures could not be confirmed as saved in the database'+(v.error?' ('+v.error+')':'')+'. Fix the problem and try again.','error');return;}
+  const prev=state.approvals[key];
+  state.approvals[key]={status:'submitted',by:sess?(sess.username||sess.email):'unknown',at:Date.now(),note:''};
+  const done=await Store.persistSettings(state,{approvalKeys:[key]});
+  if(!done){revertApproval(key,prev);showToast('Submission could not be saved to the database — please try again.','error');return;}
+  renderDataInput();
+  addAudit('Submitted for approval','FY '+y+' '+cap(k));
   showToast('Submitted for Manager/Administrator approval','success');
 }
-function decideApproval(decision){
+async function decideApproval(decision){
   if(!requireCan('approve_data','Approve Data'))return;
+  await refreshFromServer(); // review and approve the latest stored figures, not a stale copy
   const cur=currentApproval();
-  if(cur.status!=='submitted'){showToast('Nothing awaiting approval','warn');return;}
-  const sess=getSession();
+  if(cur.status!=='submitted'){renderDataInput();showToast('Nothing awaiting approval','warn');return;}
+  const sess=getSession(),key=approvalKey(),y=state.year,k=state.diDs;
+  const by=sess?(sess.username||sess.email):'unknown';
   if(decision==='approve'){
-    if(!confirm('Approve FY '+state.year+' '+cap(state.diDs)+'? This confirms the figures are ready for reporting.'))return;
-    state.approvals[approvalKey()]={status:'approved',by:sess?(sess.username||sess.email):'unknown',at:Date.now(),note:''};
-    addAudit('Data approved','FY '+state.year+' '+cap(state.diDs)+' approved by '+(sess?(sess.username||sess.email):'unknown'));
-    showToast('Approved','success');
+    if(!confirm('Approve FY '+y+' '+cap(k)+'? This confirms the figures are ready for reporting.'))return;
+    const wrote=await persistData(y,k);
+    const v=wrote?await Store.verifyDataset(y,k,state,rawOf):{ok:false};
+    if(!v.ok){showToast('Approval NOT recorded — the figures could not be confirmed as stored in the database'+(v.error?' ('+v.error+')':'')+'. Reload and try again.','error');return;}
+    state.approvals[key]={status:'approved',by,at:Date.now(),note:''};
+    const done=await Store.persistSettings(state,{approvalKeys:[key]});
+    if(!done){revertApproval(key,cur);showToast('Approval could not be saved to the database — please try again.','error');return;}
+    addAudit('Data approved','FY '+y+' '+cap(k)+' approved by '+by);
+    showToast('Approved — figures and approval are stored in the database','success');
   }else{
     const note=prompt('Reason for rejecting (optional):','')||'';
-    state.approvals[approvalKey()]={status:'rejected',by:sess?(sess.username||sess.email):'unknown',at:Date.now(),note:note};
-    addAudit('Data rejected','FY '+state.year+' '+cap(state.diDs)+' rejected by '+(sess?(sess.username||sess.email):'unknown')+(note?' — '+note:''));
+    state.approvals[key]={status:'rejected',by,at:Date.now(),note:note};
+    const done=await Store.persistSettings(state,{approvalKeys:[key]});
+    if(!done){revertApproval(key,cur);showToast('Rejection could not be saved to the database — please try again.','error');return;}
+    addAudit('Data rejected','FY '+y+' '+cap(k)+' rejected by '+by+(note?' — '+note:''));
     showToast('Rejected — sent back for changes','warn');
   }
-  persist();renderDataInput();
+  renderDataInput();
 }
 function renderApprovalBar(){
   const cur=currentApproval();
@@ -2492,7 +2795,7 @@ document.addEventListener('change',e=>{
 });
 function saveSettings(){
   if(!requireCan('system_admin','System Administration'))return;
-  state.settings.planLocked=$('#setLock').checked;persist();addAudit('Settings saved','Plan locked: '+(state.settings.planLocked?'Yes':'No'));showToast('Settings saved','success');
+  state.settings.planLocked=$('#setLock').checked;Store.persistSettings(state,{settings:true});addAudit('Settings saved','Plan locked: '+(state.settings.planLocked?'Yes':'No'));showToast('Settings saved','success');
 }
 function downloadImportTemplate(){
   if(typeof XLSX==='undefined'){showToast('Excel library not loaded','error');return;}
@@ -2511,8 +2814,8 @@ function downloadImportTemplate(){
   showToast('Import template downloaded','success');
 }
 function exportJSON(){if(!requireCan('system_admin','System Administration'))return;const out={};YEARS.forEach(y=>{out[y]={plan:rawOf(state.datasets[y].plan),actual:rawOf(state.datasets[y].actual)};});downloadBlob(new Blob([JSON.stringify({app:'DBE FCY Reporting Suite',exportedAt:new Date().toISOString(),datasets:out},null,2)],{type:'application/json'}),'DBE_FCY_Backup_'+new Date().toISOString().slice(0,10)+'.json');addAudit('Backup export','JSON');showToast('Backup downloaded','success');}
-function importJSON(file){if(!requireCan('import_data','Import Data')||!requireCan('system_admin','System Administration'))return;const rd=new FileReader();rd.onload=ev=>{try{const j=JSON.parse(ev.target.result);if(!j.datasets)throw new Error('bad');YEARS.forEach(y=>{if(!j.datasets[y])return;['plan','actual'].forEach(dk=>{const src=j.datasets[y][dk];if(!src)return;if(typeof src.opening0==='number')state.datasets[y][dk].opening0=src.opening0;RAW_KEYS.forEach(k=>{state.datasets[y][dk][k]=(Array.isArray(src[k])&&src[k].length===12&&src[k].every(x=>typeof x==='number'))?src[k].slice():z();});recalc(state.datasets[y][dk]);});});persist();refreshStatusChip();addAudit('Backup import','JSON');showToast('Backup imported','success');}catch(err){showToast('Import failed','error');}};rd.readAsText(file);}
-function resetAllData(){if(!requireCan('system_admin','System Administration'))return;if(!confirm('Reset ALL fiscal years to original figures? This overwrites the shared data in Supabase for every user.'))return;state.datasets=clone(ORIGINAL);recalcAll();persist();refreshStatusChip();addAudit('Full reset','baseline');showToast('All data restored','warn');}
+function importJSON(file){if(!requireCan('import_data','Import Data')||!requireCan('system_admin','System Administration'))return;const rd=new FileReader();rd.onload=ev=>{try{const j=JSON.parse(ev.target.result);if(!j.datasets)throw new Error('bad');YEARS.forEach(y=>{if(!j.datasets[y])return;['plan','actual'].forEach(dk=>{const src=j.datasets[y][dk];if(!src)return;if(typeof src.opening0==='number')state.datasets[y][dk].opening0=src.opening0;RAW_KEYS.forEach(k=>{state.datasets[y][dk][k]=(Array.isArray(src[k])&&src[k].length===12&&src[k].every(x=>typeof x==='number'))?src[k].slice():z();});recalc(state.datasets[y][dk]);});});persistAll(true);refreshStatusChip();addAudit('Backup import','JSON');showToast('Backup imported','success');}catch(err){showToast('Import failed','error');}};rd.readAsText(file);}
+function resetAllData(){if(!requireCan('system_admin','System Administration'))return;if(!confirm('Reset ALL fiscal years to original figures? This overwrites the shared data in Supabase for every user.'))return;state.datasets=clone(ORIGINAL);recalcAll();persistAll(true);refreshStatusChip();addAudit('Full reset','baseline');showToast('All data restored','warn');}
 async function refreshAuditLog(){await Store.loadAudit(state);renderAdmin();showToast('Audit log refreshed','success');}
 
 /* ================= APP BOOT ================= */
@@ -2613,6 +2916,10 @@ async function init(){
     }
   });
 }
+saveStatusInit();
+window.addEventListener('beforeunload',e=>{if(Store.hasPending()){e.preventDefault();e.returnValue='';}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshFromServer();});
+setInterval(()=>{if(document.visibilityState==='visible')refreshFromServer();},5*60*1000);
 init();
 </script>
 </body>
