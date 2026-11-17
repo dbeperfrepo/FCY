@@ -1703,7 +1703,25 @@ function renderDrill(){
 function cellVal(view,key,m){const P=curP(),A=curA();return view==='plan'?P[key][m]:view==='actual'?A[key][m]:A[key][m]-P[key][m];}
 function gtVal(view,key){if(key==='opening')return cellVal(view,'opening',0);if(key==='closing')return cellVal(view,'closing',11);let s=0;for(let m=0;m<12;m++)s+=cellVal(view,key,m);return s;}
 function applicableYear(y){const P=state.datasets[y].plan,A=state.datasets[y].actual,set=new Set();[...INFLOW_KEYS,...OUTFLOW_KEYS,'euroAdj'].forEach(k=>{if(P[k].some(v=>Math.abs(v)>TOL)||A[k].some(v=>Math.abs(v)>TOL))set.add(k);});return set;}
-function applicableRange(y,a,b){const P=state.datasets[y].plan,A=state.datasets[y].actual,set=new Set();const S=(ds,k)=>{let t=0;for(let i=a;i<=b;i++)t+=ds[k][i];return t;};const C=(ds,k)=>{let t=0;for(let i=0;i<=b;i++)t+=ds[k][i];return t;};[...INFLOW_KEYS,...OUTFLOW_KEYS,'euroAdj'].forEach(k=>{if(Math.abs(S(P,k))>TOL||Math.abs(S(A,k))>TOL||Math.abs(C(P,k))>TOL||Math.abs(C(A,k))>TOL)set.add(k);});return set;}
+/* A line must appear whenever ANY column shown in the report has a value for it (current plan/actual,
+   cumulative, previous period, previous-year comparatives) -- otherwise the displayed items cannot sum to the
+   displayed subtotal. cmp: 'month' = previous month only; 'period' = previous period + previous-year columns. */
+function comparativeKeys(y,a,b,cmp){
+  const set=new Set();if(!cmp)return set;
+  const yi=YEARS.indexOf(y),PA=yi>0?state.datasets[YEARS[yi-1]].actual:null,A=state.datasets[y].actual;
+  const len=b-a+1;
+  /* Test each displayed column on its NET value (exactly what the report prints), so an item that nets to zero
+     in every column (e.g. a provision made and reversed) is not listed as an all-zero row. */
+  [...INFLOW_KEYS,...OUTFLOW_KEYS,'euroAdj'].forEach(k=>{
+    let prev=0;
+    for(let i=a-len;i<=a-1;i++){if(i<0){if(PA)prev+=PA[k][12+i];}else prev+=A[k][i];}
+    let py=0,pyCum=0;
+    if(cmp==='period'&&PA){for(let i=a;i<=b;i++)py+=PA[k][i];for(let i=0;i<=b;i++)pyCum+=PA[k][i];}
+    if(Math.abs(prev)>TOL||Math.abs(py)>TOL||Math.abs(pyCum)>TOL)set.add(k);
+  });
+  return set;
+}
+function applicableRange(y,a,b,cmp){const P=state.datasets[y].plan,A=state.datasets[y].actual,set=comparativeKeys(y,a,b,cmp);const S=(ds,k)=>{let t=0;for(let i=a;i<=b;i++)t+=ds[k][i];return t;};const C=(ds,k)=>{let t=0;for(let i=0;i<=b;i++)t+=ds[k][i];return t;};[...INFLOW_KEYS,...OUTFLOW_KEYS,'euroAdj'].forEach(k=>{if(Math.abs(S(P,k))>TOL||Math.abs(S(A,k))>TOL||Math.abs(C(P,k))>TOL||Math.abs(C(A,k))>TOL)set.add(k);});return set;}
 function buildReportTree(y){
   const set=applicableYear(y);
   const t=[{key:'opening',cls:'strong'}];
@@ -1715,8 +1733,8 @@ function buildReportTree(y){
   t.push({key:'closing',cls:'hl-end'});
   return t;
 }
-function buildRangeTree(y,a,b,romanFlag){
-  const set=applicableRange(y,a,b);
+function buildRangeTree(y,a,b,romanFlag,cmp){
+  const set=applicableRange(y,a,b,cmp);
   const t=[{label:'Beginning Balance in USD',calc:'beg',kind:'bal'}];
   t.push({label:'FCY Cash Inflows',calc:'in',kind:'in',children:INFLOW_TREE.filter(n=>set.has(n.key)).map(n=>({key:n.key}))});
   t.push({label:'FCY Cash Outflow',calc:'out',kind:'out',children:OUTFLOW_TREE.filter(n=>set.has(n.key)).map(n=>({key:n.key}))});
@@ -1821,7 +1839,7 @@ function renderMonthly(){
     if(rw.key)return {c1:P[rw.key][m],c2:A[rw.key][m],c4:prevKey(rw.key),c6:cumP(rw.key),c7:cumA(rw.key)};
     return {c1:null,c2:null,c4:null,c6:null,c7:null};
   };
-  const tree=buildRangeTree(y,m,m,false);
+  const tree=buildRangeTree(y,m,m,false,'month');
   const rows=flattenTree(tree,null,0,false,null);
   const startYear=FY_DEF[y].start,calYear=m<6?startYear:startYear+1;
   let prevLbl='—';
@@ -1950,7 +1968,7 @@ function renderPeriod(){
   const dash='<td class="ctr"><span class="zero">—</span></td>';
   const colsFor=k=>({p1:S(P,k,a,b),a2:S(A,k,a,b),q3:prevPeriodSum(k),p4:S(P,k,0,b),a5:S(A,k,0,b),y6:PA?S(PA,k,a,b):null,y7:PA?S(PA,k,0,b):null});
   const colsForFlow=keys=>{const o={p1:0,a2:0,q3:0,p4:0,a5:0,y6:PA?0:null,y7:PA?0:null};keys.forEach(k=>{const c=colsFor(k);o.p1+=c.p1;o.a2+=c.a2;o.q3+=c.q3;o.p4+=c.p4;o.a5+=c.a5;if(PA){o.y6+=(c.y6||0);o.y7+=(c.y7||0);}});return o;};
-  const tree=buildRangeTree(y,a,b,false);
+  const tree=buildRangeTree(y,a,b,false,'period');
   const rows=flattenTree(tree,null,0,false,null);
   /* FIXED rowCols: handles 'fx' (EURO) rows and never returns null */
   const rowCols=rw=>{
